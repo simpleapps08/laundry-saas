@@ -14,7 +14,8 @@ class LaporanController extends Controller
     //Halaman Laporan
     public function laporan()
     {
-      $laporan = transaksi::where('user_id', Auth::id())->get();
+      // FASE 2A: laporan per CABANG
+      $laporan = transaksi::orderBy('id','DESC')->get();
       return view('karyawan.laporan.index', compact('laporan'));
     }
 

@@ -12,13 +12,12 @@ class InvoiceController extends Controller
        // Invoice
     public function invoicekar(Request $request)
     {
+      // FASE 2A: invoice per CABANG (scope MilikCabang otomatis)
       $invoice = transaksi::with('price')
-      ->where('user_id',Auth::id())
       ->where('id',$request->id)
       ->get();
 
       $data = transaksi::with('customers','user')
-      ->where('user_id',Auth::id())
       ->where('id',$request->id)
       ->first();
 
@@ -29,13 +28,12 @@ class InvoiceController extends Controller
     // Cetak invoice
     public function cetakinvoice(Request $request)
     {
-       $invoice = transaksi::with('price')
-      ->where('user_id',Auth::id())
+       // FASE 2A: invoice per CABANG (scope MilikCabang otomatis)
+      $invoice = transaksi::with('price')
       ->where('id',$request->id)
       ->get();
 
       $data = transaksi::with('customers','user')
-      ->where('user_id',Auth::id())
       ->where('id',$request->id)
       ->first();
 

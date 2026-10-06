@@ -22,7 +22,9 @@ class PelayananController extends Controller
     // Halaman list order masuk
     public function index()
     {
-      $order = transaksi::with('price')->where('user_id',Auth::user()->id)
+      // FASE 2A: scope MilikCabang otomatis filter per cabang_id,
+      // jadi karyawan melihat seluruh order cabangnya (bukan hanya miliknya).
+      $order = transaksi::with('price')
       ->orderBy('id','DESC')->get();
       return view('karyawan.transaksi.order', compact('order'));
     }
@@ -34,7 +36,12 @@ class PelayananController extends Controller
         DB::beginTransaction();
         $order = new transaksi();
         $order->invoice         = $request->invoice;
-        $order->tgl_transaksi   = Carbon::now()->parse($order->tgl_transaksi)->format('d-m-Y');
+
+        // FASE 2B: tgl_transaksi (string 'd-m-Y') DAN tanggal_masuk (date)
+        $tglTransaksi           = Carbon::now();
+        $order->tgl_transaksi   = $tglTransaksi->format('d-m-Y');
+        $order->tanggal_masuk   = $tglTransaksi->format('Y-m-d');
+
         $order->status_payment  = $request->status_payment;
         $order->harga_id        = $request->harga_id;
         $order->customer_id     = $request->customer_id;
@@ -42,21 +49,46 @@ class PelayananController extends Controller
         $order->customer        = namaCustomer($order->customer_id);
         $order->email_customer  = email_customer($order->customer_id);
         $order->hari            = $request->hari;
+
+        // FASE 2B: tulis ke kolom string LAMA dan kolom numerik BARU sekaligus.
+        // Hitungan memakai cast float agar tidak ada "10" . "5" string concat.
+        $kg                     = (float) $request->kg;
+        $hargaSatuan            = (float) $request->harga;
+        $discPersen             = $request->disc != NULL ? (float) $request->disc : 0;
+
         $order->kg              = $request->kg;
         $order->harga           = $request->harga;
         $order->disc            = $request->disc;
-        $hitung                 = $order->kg * $order->harga;
+        $order->kg_numeric      = $kg;
+        $order->harga_numeric   = $hargaSatuan;
+        $order->disc_numeric    = $discPersen;
+
+        $hitung                 = $kg * $hargaSatuan;
+        $order->total_numeric   = $hitung;
+
         if ($request->disc != NULL) {
-            $disc                = ($hitung * $order->disc) / 100;
+            $disc                = ($hitung * $discPersen) / 100;
             $total               = $hitung - $disc;
             $order->harga_akhir  = $total;
+            $order->harga_akhir_numeric = $total;
         } else {
           $order->harga_akhir    = $hitung;
+          $order->harga_akhir_numeric = $hitung;
         }
+
         $order->jenis_pembayaran  = $request->jenis_pembayaran;
-        $order->tgl               = Carbon::now()->day;
-        $order->bulan             = Carbon::now()->month;
-        $order->tahun             = Carbon::now()->year;
+
+        // Kolom string lama (masih dibaca view existing)
+        $order->tgl               = $tglTransaksi->day;
+        $order->bulan             = $tglTransaksi->month;
+        $order->tahun             = $tglTransaksi->year;
+
+        // FASE 2A: cabang_id ikut terisi (auto-fill trait juga jalan,
+        // tapi eksplisit lebih aman kalau auth tidak tersedia)
+        if ($order->cabang_id === null && Auth::user()->cabang_id !== null) {
+            $order->cabang_id = Auth::user()->cabang_id;
+        }
+
         $order->save();
 
         if ($order) {
@@ -104,7 +136,8 @@ class PelayananController extends Controller
     public function addorders()
     {
       $customer = User::where('karyawan_id',Auth::user()->id)->get();
-      $jenisPakaian = harga::where('user_id',Auth::id())->where('status','1')->get();
+      // FASE 2A / M3: harga milik CABANG, bukan per-akun karyawan.
+      $jenisPakaian = harga::where('status','1')->get();
 
       $y = date('Y');
       $number = mt_rand(1000, 9999);
@@ -112,7 +145,7 @@ class PelayananController extends Controller
       $newID = $number. Auth::user()->id .''.$y;
       $tgl = date('d-m-Y');
 
-      $cek_harga = harga::where('user_id',Auth::user()->id)->where('status',1)->first();
+      $cek_harga = harga::where('status',1)->first();
       $cek_customer = User::select('id','karyawan_id')->where('karyawan_id',Auth::id())->count();
       return view('karyawan.transaksi.addorder', compact('customer','newID','cek_harga','cek_customer','jenisPakaian'));
     }
@@ -121,7 +154,6 @@ class PelayananController extends Controller
     public function listharga(Request $request)
     {
        $list_harga = harga::select('id','harga')
-        ->where('user_id',Auth::user()->id)
         ->where('id',$request->id)
         ->get();
         $select = '';
@@ -143,7 +175,6 @@ class PelayananController extends Controller
     public function listhari(Request $request)
     {
       $list_jenis = harga::select('id','hari')
-        ->where('user_id',Auth::user()->id)
         ->where('id',$request->id)
         ->get();
         $select = '';

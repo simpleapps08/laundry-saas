@@ -14,7 +14,9 @@ class LaporanExport implements FromView
     */
     public function view(): View
     {
-      $data = transaksi::where('user_id',Auth::id())->get();
+      // FASE 2A: ekspor per CABANG (sebelumnya per-akun, sehingga
+      // laporan Excel tidak lengkap untuk karyawan dalam satu cabang).
+      $data = transaksi::orderBy('id','DESC')->get();
 
       return view(
         'karyawan.laporan.excelExport',

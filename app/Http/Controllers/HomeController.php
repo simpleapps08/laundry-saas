@@ -82,11 +82,12 @@ class HomeController extends Controller
               }
 
               // Statistik Bulanan
+              // FASE 2B: pakai kolom date `tanggal_masuk`, bukan `bulan` (string)
               $bln = DB::table('transaksis')
-              ->  select('bulan', DB::raw('count(id) AS jml'))
-              ->  whereYear('created_at','=',date("Y", strtotime(now())))
-              ->  whereMonth('created_at','=',date("m", strtotime(now())))
-              ->  groupBy('bulan')
+              ->  select(DB::raw('MONTH(tanggal_masuk) AS bulan'), DB::raw('count(id) AS jml'))
+              ->  whereYear('tanggal_masuk','=',date("Y", strtotime(now())))
+              ->  whereMonth('tanggal_masuk','=',date("m", strtotime(now())))
+              ->  groupBy(DB::raw('MONTH(tanggal_masuk)'))
               ->  get();
 
               $bulans = '';
@@ -125,22 +126,29 @@ class HomeController extends Controller
                   ->  with('incomeDOld',$incomeDOld);
 
           } elseif(Auth::user()->auth === "Karyawan") {
-              $masuk = transaksi::whereIN('status_order',['Process','Done','Delivery'])->where('user_id',auth::user()->id)->count();
-              $selesai = transaksi::where('status_order','Done')->where('user_id',auth::user()->id)->count();
-              $diambil = transaksi::where('status_order','Delivery')->where('user_id',auth::user()->id)->count();
+              // FASE 2A: scope MilikCabang otomatis filter per cabang_id
+              $masuk = transaksi::whereIN('status_order',['Process','Done','Delivery'])->count();
+              $selesai = transaksi::where('status_order','Done')->count();
+              $diambil = transaksi::where('status_order','Delivery')->count();
               $customer = User::where('karyawan_id',auth::user()->id)->get();
 
-              $kgToday = transaksi::where('user_id',Auth::id())->where('tahun',date('Y'))
-              ->where('bulan', ltrim(date('m'),'0'))->where('tgl',ltrim(date('d'),'0'))->sum('kg');
+              // FASE 2B: SUM() pakai kolom *_numeric (kolom lama bertipe string).
+              // Filter tanggal pakai `tanggal_masuk` (date), bukan tgl/bulan/tahun (string).
+              $kgToday = transaksi::whereDate('tanggal_masuk', date('Y-m-d'))
+              ->sum('kg_numeric');
 
-              $kgTodayOld = transaksi::where('user_id',Auth::id())->where('tahun',date('Y'))
-              ->where('bulan', ltrim(date('m'),'0'))->where('tgl',ltrim(date("d",strtotime("-1 day")),'0'))->sum('kg');
+              $kgTodayOld = transaksi::whereDate('tanggal_masuk', date('Y-m-d', strtotime('-1 day')))
+              ->sum('kg_numeric');
 
-              $incomeM = transaksi::where('user_id',Auth::id())->where('status_payment','Success')
-              ->where('tahun',date('Y'))->where('bulan', ltrim(date('m'),'0'))->sum('harga_akhir');
+              $incomeM = transaksi::where('status_payment','Success')
+              ->whereYear('tanggal_masuk', date('Y'))
+              ->whereMonth('tanggal_masuk', date('m'))
+              ->sum('harga_akhir_numeric');
 
-              $incomeMOld = transaksi::where('user_id',Auth::id())->where('status_payment','Success')
-              ->where('tahun',date('Y'))->where('bulan', ltrim(date('m',strtotime("-1 month")),'0'))->sum('harga_akhir');
+              $incomeMOld = transaksi::where('status_payment','Success')
+              ->whereYear('tanggal_masuk', date('Y'))
+              ->whereMonth('tanggal_masuk', date('m', strtotime('-1 month')))
+              ->sum('harga_akhir_numeric');
 
               $persen = 0;
               if ($incomeMOld != null && $incomeM != null) {
@@ -148,11 +156,12 @@ class HomeController extends Controller
               }
 
               // Statistik Bulanan
+              // FASE 2B: pakai kolom date `tanggal_masuk`, bukan `bulan` (string)
               $bln = DB::table('transaksis')
-              ->  select('bulan', DB::raw('count(id) AS jml'))
-              ->  whereYear('created_at','=',date("Y", strtotime(now())))
-              ->  whereMonth('created_at','=',date("m", strtotime(now())))
-              ->  groupBy('bulan')
+              ->  select(DB::raw('MONTH(tanggal_masuk) AS bulan'), DB::raw('count(id) AS jml'))
+              ->  whereYear('tanggal_masuk','=',date("Y", strtotime(now())))
+              ->  whereMonth('tanggal_masuk','=',date("m", strtotime(now())))
+              ->  groupBy(DB::raw('MONTH(tanggal_masuk)'))
               ->  get();
 
               $bulans = '';
@@ -187,7 +196,8 @@ class HomeController extends Controller
 
           }elseif(Auth::user()->auth == 'Customer'){
             $totalLaundry = transaksi::where('customer_id',Auth::id())->count();
-            $totalLaundryKg = transaksi::where('customer_id',Auth::id())->sum('kg');
+            // FASE 2B: sum pakai kolom numerik
+            $totalLaundryKg = transaksi::where('customer_id',Auth::id())->sum('kg_numeric');
 
             $transaksi = transaksi::with('price')->where('customer_id',Auth::id())->get();
             return view('customer.index',\compact('totalLaundry','totalLaundryKg','transaksi'));
