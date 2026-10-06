@@ -60,6 +60,28 @@ class Cabang extends Model
         return $this->hasMany(harga::class, 'cabang_id');
     }
 
+    public function langganan(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Langganan::class, 'cabang_id')->orderByDesc('id');
+    }
+
+    /**
+     * Langganan yang sedang berjalan (trial/aktif dan belum berakhir).
+     */
+    public function langgananAktif(): ?Langganan
+    {
+        return $this->langganan()->whereIn('status', ['trial', 'aktif'])
+            ->where(function ($q) {
+                $q->whereNull('berakhir')->orWhere('berakhir', '>=', now()->toDateString());
+            })
+            ->first();
+    }
+
+    public function punyaFitur(string $fitur): bool
+    {
+        return (bool) $this->langgananAktif()?->paket?->punya($fitur);
+    }
+
     // ── Scope ───────────────────────────────────────────────────────────
 
     public function scopeAktif($query)

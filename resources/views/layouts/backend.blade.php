@@ -149,6 +149,28 @@
                 <li class="nav-item {{ (request()->is('home')) ? 'active' : '' }}"><a href="{{url('home')}}"><i class="feather icon-home"></i><span class="menu-title" data-i18n="Dashboard">Dashboard</span></a>
                 </li>
 
+                {{-- Menu Super Admin (FASE 3) --}}
+                    @if (auth::user()->isSuperAdmin())
+                        <li class="nav-item {{ (request()->is('super-admin')) ? 'active' : '' }}">
+                          <a href="{{ url('super-admin') }}"><i class="feather icon-shield"></i>
+                            <span class="menu-title" data-i18n="SuperAdmin">Panel Super Admin</span></a>
+                          <ul class="menu-content">
+                            <li class="nav-item {{ request()->is('super-admin/cabang') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/cabang') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Cabang</span></a></li>
+                            <li class="nav-item {{ request()->is('super-admin/langganan') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/langganan') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Langganan</span></a></li>
+                            <li class="nav-item {{ request()->is('super-admin/tagihan') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/tagihan') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Tagihan</span></a></li>
+                            <li class="nav-item {{ request()->is('super-admin/paket') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/paket') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Paket</span></a></li>
+                          </ul>
+                        </li>
+                    @endif
+
                 {{-- Menu Admin --}}
                     @if (auth::user()->auth == "Admin")
                         <li class=" nav-item"><a href="#"><i class="feather icon-users"></i><span class="menu-title" data-i18n="User">Data User</span></a>

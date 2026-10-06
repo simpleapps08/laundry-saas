@@ -63,6 +63,18 @@ Route::middleware('auth')->group(function () {
 
   });
 
+  // ── Modul Super Admin (FASE 3) ──────────────────────────────────────
+  // Mengelola lintas cabang: daftar cabang, langganan, tagihan, paket.
+  Route::prefix('super-admin')->middleware('superadmin')->group(function () {
+    Route::get('/', 'SuperAdmin\PanelController@index')->name('superadmin.index');
+    Route::get('cabang', 'SuperAdmin\PanelController@cabang')->name('superadmin.cabang');
+    Route::get('langganan', 'SuperAdmin\PanelController@langganan')->name('superadmin.langganan');
+    Route::post('langganan/simpan', 'SuperAdmin\PanelController@simpanLangganan')->name('superadmin.langganan.simpan');
+    Route::get('tagihan', 'SuperAdmin\PanelController@tagihan')->name('superadmin.tagihan');
+    Route::post('tagihan/lunas', 'SuperAdmin\PanelController@lunaskan')->name('superadmin.tagihan.lunas');
+    Route::get('paket', 'SuperAdmin\PanelController@paket')->name('superadmin.paket');
+  });
+
   // Modul Karyawan
   Route::prefix('/')->middleware('role:Karyawan')->group(function () {
     Route::resource('pelayanan','Karyawan\PelayananController');

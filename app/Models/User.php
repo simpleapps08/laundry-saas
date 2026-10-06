@@ -52,7 +52,27 @@ class User extends Authenticatable
      */
     public function isSuperAdmin(): bool
     {
-        return $this->cabang_id === null && $this->hasRole('Admin');
+        // Sumber kebenaran tunggal untuk "super-admin":
+        // berperan SuperAdmin, ATAU Admin tanpa cabang (cabang_id NULL).
+        // Kolom enum `auth` sengaja TIDAK dipakai lagi di sini supaya
+        // tidak ada dua sumber kebenaran.
+        return $this->hasRole('SuperAdmin') || $this->cabang_id === null;
+    }
+
+    /**
+     * Langganan aktif user ini (lewat cabangnya).
+     */
+    public function langganan()
+    {
+        return $this->cabang?->langgananAktif();
+    }
+
+    /**
+     * Cek fitur paket untuk user ini. Super-admin selalu boleh.
+     */
+    public function punyaFitur(string $fitur): bool
+    {
+        return \App\Services\FiturPaket::punya($fitur, $this->cabang_id);
     }
 
     function bank()
