@@ -17,7 +17,7 @@ Route::middleware('auth')->group(function () {
 
   Route::get('read-notifikasi','HomeController@readNotifikasi');
   // Modul Admin
-  Route::prefix('/')->middleware('akses.admin')->group(function () {
+  Route::prefix('/')->middleware('role:Admin')->group(function () {
     Route::resource('admin','Admin\AdminController');
 
     // Pengguna/karyawan
