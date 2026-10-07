@@ -58,7 +58,7 @@
                                 <span class="label label-info">Pending</span>
                             @endif
                         </td>
-                        <td>{{$item->price->jenis}}</td>
+                        <td>{{ optional($item->price)->jenis ?? '-' }}</td>
                         <td>
                             {{Rupiah::getRupiah($item->harga_akhir)}}
                         </td>

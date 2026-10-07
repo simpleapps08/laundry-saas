@@ -96,7 +96,7 @@
                       <td> {{$transaksis->tgl_transaksi}} </td>
                       <td> {{$transaksis->status_order}} </td>
                       <td> {{$transaksis->status_payment}} </td>
-                      <td> {{$transaksis->price->jenis}} </td>
+                      <td> {{ optional($transaksis->price)->jenis ?? '-' }} </td>
                       <td> {{$transaksis->harga_akhir}} </td>
                       {{-- <td>
                         <a href="" class="btn btn-sm btn-info">Detail</a>

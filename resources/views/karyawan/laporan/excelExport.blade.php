@@ -32,7 +32,7 @@
         <tr>
           <td> {{$key+1}}  </td>
           <td colspan="2"> {{$items->customer}} </td>
-          <td colspan="2"> {{$items->price->jenis}} </td>
+          <td colspan="2"> {{ optional($items->price)->jenis ?? '-' }} </td>
           <td colspan="2"> {{$items->status_payment}} </td>
           <td colspan="2"> {{$items->jenis_pembayaran}} </td>
           <td colspan="2">Rp {{number_format($items->harga_akhir)}} </td>

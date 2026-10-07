@@ -56,7 +56,7 @@
                                       <span class="label label-info">Belum Dibayar</span>
                                   @endif
                               </td>
-                              <td>{{$item->price->jenis}}</td>
+                              <td>{{ optional($item->price)->jenis ?? '-' }}</td>
                               <td>
                                 <p>{{Rupiah::getRupiah($item->harga_akhir)}}</p>
                               </td>

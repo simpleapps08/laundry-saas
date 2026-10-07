@@ -88,7 +88,7 @@
                 @foreach ($invoice as $item)
                 <tr>
                     <td style="color:black">1</td>
-                    <td style="color:black">{{$item->price->jenis}}</td>
+                    <td style="color:black">{{ optional($item->price)->jenis ?? '-' }}</td>
                     <td style="color:black">{{$item->kg}} Kg</td>
                     <td style="color:black">{{Rupiah::getRupiah($item->harga)}} /Kg</td>
                     <td><input type="hidden" value="{{$hitung = $item->kg * $item->harga}}">

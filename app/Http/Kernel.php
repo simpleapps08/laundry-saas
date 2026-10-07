@@ -35,6 +35,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CabangAktifMiddleware::class,
         ],
 
         'api' => [
@@ -66,6 +67,7 @@ class Kernel extends HttpKernel
         'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         'akses.admin' => \App\Http\Middleware\AksesAdminMiddleware::class,
         'fitur' => \App\Http\Middleware\FiturPaketMiddleware::class,
+        'cabang.aktif' => \App\Http\Middleware\CabangAktifMiddleware::class,
     ];
 
     /**
