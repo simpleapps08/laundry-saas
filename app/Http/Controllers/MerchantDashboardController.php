@@ -30,17 +30,17 @@ class MerchantDashboardController extends Controller
         $semuaCabang = MerchantDashboard::cabangTersedia();
         $semuaIds    = $semuaCabang->pluck('id')->map('intval')->all();
 
-        // Mode: "semua" atau 1 cabang tertentu
-        $mode        = $request->get('mode', 'semua');
+        // SATU sumber kebenaran: `cabang_aktif_id` di session.
+        // Tidak memakai query string — supaya header, kartu, dan tabel
+        // selalu konsisten dan tidak bisa dipaksa lihat cabang lain.
         $cabangAktif = session('cabang_aktif_id');
 
-        if ($mode === 'cabang' && $cabangAktif !== null && $user->bolehAksesCabang($cabangAktif)) {
-            $ids = [(int) $cabangAktif];
-        } elseif ($mode === 'cabang' && ! empty($semuaIds)) {
-            $ids = [$semuaIds[0]];
+        if ($cabangAktif !== null && $user->bolehAksesCabang($cabangAktif)) {
+            $mode = 'cabang';
+            $ids  = [(int) $cabangAktif];
         } else {
-            $ids  = $semuaIds;
             $mode = 'semua';
+            $ids  = $semuaIds;
         }
 
         $ringkasan = MerchantDashboard::ringkasan($ids);

@@ -32,7 +32,9 @@
           <label class="mr-1 mb-0 text-muted" style="font-size:13px;white-space:nowrap">Lihat:</label>
           <select name="cabang_id" class="form-control form-control-sm" style="min-width:220px"
                   onchange="this.form.submit()">
-            <option value="">Semua Cabang ({{ count($semuaCabang) }})</option>
+            <option value="" {{ $cabangAktif === null ? 'selected' : '' }}>
+              Semua Cabang ({{ count($semuaCabang) }})
+            </option>
             @foreach($semuaCabang as $c)
               <option value="{{ $c->id }}" {{ (int)$cabangAktif === (int)$c->id ? 'selected' : '' }}>
                 {{ $c->nama }}{{ $c->status !== 'aktif' ? ' ('.$c->status.')' : '' }}

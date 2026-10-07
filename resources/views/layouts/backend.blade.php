@@ -80,7 +80,7 @@
                     <span class="text-muted mr-50" style="font-size:12px">Cabang:</span>
                     <select name="cabang_id" class="form-control form-control-sm py-0"
                             style="min-width:170px;height:30px" onchange="this.form.submit()">
-                      <option value="">Semua ({{ $__cbg->count() }})</option>
+                      <option value="" {{ session('cabang_aktif_id') === null ? 'selected' : '' }}>Semua ({{ $__cbg->count() }})</option>
                       @foreach($__cbg as $__c)
                         <option value="{{ $__c->id }}" {{ (int)session('cabang_aktif_id') === (int)$__c->id ? 'selected' : '' }}>
                           {{ $__c->nama }}

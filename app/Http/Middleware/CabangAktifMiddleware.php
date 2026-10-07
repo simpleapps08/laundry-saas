@@ -39,13 +39,13 @@ class CabangAktifMiddleware
             $cabangAktif = null;
         }
 
-        // 2. Auto-set untuk user yang punya cabang tapi belum ada sesi.
-        if ($cabangAktif === null) {
-            $ids = $user->cabangIds();
-            if (! empty($ids)) {
-                session(['cabang_aktif_id' => $ids[0]]);
-            }
-        }
+        // 2. SENGAJA TIDAK auto-set cabang aktif.
+        //
+        // `cabang_aktif_id` hanya diisi ketika user MEMILIH cabang lewat
+        // pemilih cabang. Kalau kosong, artinya mode "Semua Cabang" —
+        // user melihat seluruh cabang milik merchant-nya (lihat
+        // MilikCabang::cabangIdsUntukScope()). Auto-set akan membuat
+        // mode "Semua Cabang" tidak pernah tercapai.
 
         return $next($request);
     }
