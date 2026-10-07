@@ -16,6 +16,16 @@ Route::middleware(['auth'])->group(function () {
 // Frontend
 Route::get('pencarian-laundry','FrontController@search');
 
+// ── PENDAFTARAN MANDIRI (self-service signup) ───────────────────────
+// PUBLIK. Rate-limited 5 percobaan/jam per IP supaya tidak di-spam
+// (pendaftaran = pembuatan akun + merchant nyata).
+$__batasDaftar = (int) env('SIGNUP_THROTTLE_PER_JAM', 5);
+Route::middleware("throttle:{$__batasDaftar},60")->group(function () {
+    Route::get('daftar', 'Auth\SignupController@harga')->name('signup.harga');
+    Route::get('daftar/form', 'Auth\SignupController@form')->name('signup.form');
+    Route::post('daftar', 'Auth\SignupController@daftar')->name('signup.daftar');
+});
+
 Auth::routes([
     'register' => false,
 ]);
