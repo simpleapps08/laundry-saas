@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Cabang;
 use App\Models\Langganan;
+use App\Models\Merchant;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -15,7 +17,13 @@ use Illuminate\Support\Facades\Cache;
  * Pemakaian di Blade:
  *   @fitur('telegram') ... @endfitur
  *
- * Hasil di-cache 5 menit per cabang supaya tidak query tiap render.
+ * Aturan isolasi (Tahap 4):
+ *  - Paket acuan sebuah CABANG = langganan aktif cabang itu.
+ *  - Paket acuan sebuah MERCHANT = paket TERTINGGI di antara langganan aktifnya
+ *    (keputusan Boz: "ambil yang tertinggi").
+ *  - Kuota cabang selalu dihitung di tingkat MERCHANT, bukan per cabang.
+ *
+ * Hasil di-cache 5 menit supaya tidak query tiap render.
  */
 class FiturPaket
 {
@@ -36,6 +44,33 @@ class FiturPaket
                 ->orderByDesc('id')
                 ->first();
         });
+    }
+
+    /**
+     * Paket efektif untuk sebuah cabang (via merchant kalau ada).
+     */
+    public static function paketUntukCabang(?int $cabangId): ?\App\Models\Paket
+    {
+        if ($cabangId === null) {
+            return null;
+        }
+
+        $langganan = self::langganan($cabangId);
+
+        if ($langganan === null) {
+            return null;
+        }
+
+        // Kalau cabang punya merchant, pakai paket tertinggi merchant
+        // supaya SEMUA cabang merchant menikmati paket tertinggi.
+        if ($langganan->merchant_id !== null) {
+            $merchant = Merchant::find($langganan->merchant_id);
+            if ($merchant) {
+                return HargaLangganan::paketTertinggi($merchant) ?? $langganan->paket;
+            }
+        }
+
+        return $langganan->paket;
     }
 
     /**
@@ -60,12 +95,15 @@ class FiturPaket
             return false;
         }
 
-        return (bool) $langganan->paket?->punya($fitur);
+        return (bool) self::paketUntukCabang($cabangId)?->punya($fitur);
     }
 
     /**
      * Sisa kuota untuk jenis batas tertentu.
      * Mengembalikan -1 kalau tanpa batas.
+     *
+     * PENTING: kuota 'cabang' dihitung di tingkat MERCHANT (bukan per cabang) —
+     * kalau tidak, setiap cabang akan menganggap dirinya boleh nambah cabang.
      */
     public static function sisaKuota(string $jenis, ?int $cabangId = null): int
     {
@@ -75,8 +113,7 @@ class FiturPaket
             return -1;
         }
 
-        $langganan = self::langganan($cabangId);
-        $paket = $langganan?->paket;
+        $paket = self::paketUntukCabang($cabangId);
 
         if ($paket === null) {
             return 0;
@@ -88,9 +125,20 @@ class FiturPaket
             return -1;
         }
 
+        // ── Khusus kuota CABANG: hitung di tingkat merchant ──────────────
+        if ($jenis === 'cabang') {
+            $langganan = self::langganan($cabangId);
+            $merchantId = $langganan?->merchant_id;
+
+            $terpakai = $merchantId !== null
+                ? Cabang::where('merchant_id', $merchantId)->count()
+                : Cabang::where('id', $cabangId)->count();
+
+            return max(0, $batas - $terpakai);
+        }
+
         $terpakai = match ($jenis) {
-            'cabang' => Cabang::where('id', $cabangId)->count(),
-            'user' => \App\Models\User::where('cabang_id', $cabangId)->count(),
+            'user' => User::where('cabang_id', $cabangId)->count(),
             'transaksi' => \App\Models\transaksi::where('cabang_id', $cabangId)
                 ->whereYear('tanggal_masuk', date('Y'))
                 ->whereMonth('tanggal_masuk', date('m'))
@@ -123,5 +171,14 @@ class FiturPaket
         }
 
         Cache::forget("langganan.cabang.{$cabangId}");
+
+        // Bersihkan juga cache cabang lain milik merchant yang sama,
+        // karena paket tertinggi merchant memengaruhi semua cabangnya.
+        $langganan = Langganan::where('cabang_id', $cabangId)->first();
+        if ($langganan?->merchant_id !== null) {
+            Langganan::where('merchant_id', $langganan->merchant_id)
+                ->pluck('cabang_id')
+                ->each(fn ($cid) => Cache::forget("langganan.cabang.{$cid}"));
+        }
     }
 }

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Tagihan langganan (Tahap 4: ikut merchant).
+ */
 class Tagihan extends Model
 {
     use HasFactory;
@@ -13,7 +16,7 @@ class Tagihan extends Model
     protected $table = 'tagihan';
 
     protected $fillable = [
-        'langganan_id', 'cabang_id', 'nomor', 'jumlah', 'status',
+        'langganan_id', 'cabang_id', 'merchant_id', 'nomor', 'jumlah', 'status',
         'jatuh_tempo', 'periode_mulai', 'periode_akhir',
         'dibayar_pada', 'metode_bayar', 'bukti_bayar', 'catatan',
     ];
@@ -36,6 +39,11 @@ class Tagihan extends Model
         return $this->belongsTo(Cabang::class, 'cabang_id');
     }
 
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
+
     public function scopeBelumBayar($query)
     {
         return $query->whereIn('status', ['belum_bayar', 'menunggu_verifikasi']);
@@ -54,7 +62,7 @@ class Tagihan extends Model
     }
 
     /**
-     * Nomor tagihan berurutan: INV-YYYYMM-0001
+     * Nomor tagihan berurutan: SUB-YYYYMM-0001
      */
     public static function buatNomor(): string
     {

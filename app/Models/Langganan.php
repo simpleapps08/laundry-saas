@@ -3,13 +3,21 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Services\HargaLangganan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Langganan satu cabang.
+ * Langganan — SATU SUMBER KEBENARAN langganan (Tahap 4).
+ *
+ * Sejak Tahap 4, langganan terikat ke `merchant_id` (pemilik bisnis) sekaligus
+ * tetap menyimpan `cabang_id` (unit yang ditagih). Harga dihitung bertingkat:
+ *
+ *   harga = harga_paket × jumlah_cabang × (1 − diskon_persen/100)
+ *
+ * Diskon diambil dari tabel `diskon_langganan` (diatur super-admin).
  *
  * TIDAK memakai SoftDeletes — riwayat langganan harus tetap ada
  * untuk keperluan audit pendapatan.
@@ -21,7 +29,8 @@ class Langganan extends Model
     protected $table = 'langganan';
 
     protected $fillable = [
-        'cabang_id', 'paket_id', 'siklus', 'status',
+        'cabang_id', 'merchant_id', 'paket_id', 'jumlah_cabang',
+        'siklus', 'status',
         'mulai', 'berakhir', 'trial_berakhir',
         'harga_disepakati', 'catatan',
     ];
@@ -31,6 +40,7 @@ class Langganan extends Model
         'berakhir' => 'date',
         'trial_berakhir' => 'date',
         'harga_disepakati' => 'decimal:2',
+        'jumlah_cabang' => 'integer',
     ];
 
     // ── Relasi ──────────────────────────────────────────────────────────
@@ -38,6 +48,11 @@ class Langganan extends Model
     public function cabang(): BelongsTo
     {
         return $this->belongsTo(Cabang::class, 'cabang_id');
+    }
+
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
     }
 
     public function paket(): BelongsTo
@@ -55,6 +70,11 @@ class Langganan extends Model
     public function scopeAktif($query)
     {
         return $query->whereIn('status', ['trial', 'aktif']);
+    }
+
+    public function scopeUntukMerchant($query, $merchantId)
+    {
+        return $query->where('merchant_id', $merchantId);
     }
 
     // ── Helper status ───────────────────────────────────────────────────
@@ -80,7 +100,6 @@ class Langganan extends Model
 
     /**
      * Segarkan status berdasarkan tanggal berakhir.
-     * Dipanggil oleh scheduled command (lihat RefreshStatusLangganan).
      */
     public function segarkanStatus(): self
     {
@@ -101,10 +120,30 @@ class Langganan extends Model
         return $this;
     }
 
+    /**
+     * Harga efektif SATU cabang (tanpa diskon bertingkat).
+     */
     public function hargaEfektif(): float
     {
         return (float) ($this->harga_disepakati
             ?? $this->paket?->hargaUntuk($this->siklus)
             ?? 0);
+    }
+
+    /**
+     * Rincian harga lengkap (pakai diskon bertingkat).
+     * Satu sumber kebenaran: HargaLangganan.
+     */
+    public function rincianHarga(?int $jumlahCabang = null): array
+    {
+        return HargaLangganan::hitung($this, $jumlahCabang);
+    }
+
+    /**
+     * Total setelah diskon bertingkat.
+     */
+    public function hargaSetelahDiskon(?int $jumlahCabang = null): float
+    {
+        return (float) $this->rincianHarga($jumlahCabang)['total'];
     }
 }

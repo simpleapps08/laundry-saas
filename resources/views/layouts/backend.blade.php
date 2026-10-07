@@ -204,6 +204,12 @@
                             <li class="nav-item {{ request()->is('super-admin/paket') ? 'active' : '' }}">
                               <a href="{{ url('super-admin/paket') }}"><i class="feather icon-circle"></i>
                                 <span class="menu-item">Paket</span></a></li>
+                            <li class="nav-item {{ request()->is('super-admin/merchant') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/merchant') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Merchant</span></a></li>
+                            <li class="nav-item {{ request()->is('super-admin/setelan') ? 'active' : '' }}">
+                              <a href="{{ url('super-admin/setelan') }}"><i class="feather icon-circle"></i>
+                                <span class="menu-item">Setelan Diskon</span></a></li>
                           </ul>
                         </li>
                     @endif

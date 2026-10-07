@@ -84,6 +84,10 @@ Route::middleware('auth')->group(function () {
     Route::get('tagihan', 'SuperAdmin\PanelController@tagihan')->name('superadmin.tagihan');
     Route::post('tagihan/lunas', 'SuperAdmin\PanelController@lunaskan')->name('superadmin.tagihan.lunas');
     Route::get('paket', 'SuperAdmin\PanelController@paket')->name('superadmin.paket');
+    Route::get('merchant', 'SuperAdmin\PanelController@merchant')->name('superadmin.merchant');
+    Route::post('merchant/tagihan', 'SuperAdmin\PanelController@buatTagihanMerchant')->name('superadmin.merchant.tagihan');
+    Route::get('setelan', 'SuperAdmin\PanelController@setelan')->name('superadmin.setelan');
+    Route::post('setelan/simpan', 'SuperAdmin\PanelController@simpanSetelan')->name('superadmin.setelan.simpan');
   });
 
   // Modul Karyawan
