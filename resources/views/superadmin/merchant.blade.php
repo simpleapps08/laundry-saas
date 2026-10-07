@@ -21,10 +21,15 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Daftar Merchant &amp; Rekap Tagihan</h4>
-        <p class="text-muted mb-0" style="font-size:13px">
-          Harga dihitung per cabang, dengan diskon bertingkat sesuai jumlah cabang merchant.
-        </p>
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+          <div>
+            <h4 class="card-title mb-0">Daftar Merchant &amp; Rekap Tagihan</h4>
+            <p class="text-muted mb-0" style="font-size:13px">
+              Harga dihitung per cabang, dengan diskon bertingkat sesuai jumlah cabang merchant.
+            </p>
+          </div>
+          <a href="{{ route('superadmin.merchant.create') }}" class="btn btn-primary">+ Tambah Merchant</a>
+        </div>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -50,7 +55,7 @@
                   @endphp
                   <tr>
                     <td>
-                      <strong>{{ $m->nama }}</strong><br>
+                      <a href="{{ route('superadmin.merchant.show', $m->id) }}"><strong>{{ $m->nama }}</strong></a><br>
                       <small class="text-muted">{{ $m->kode }} &middot; {{ $m->email ?? 'tanpa email' }}</small>
                     </td>
                     <td class="text-center">
@@ -85,10 +90,9 @@
                       @endif
                     </td>
                     <td>
-                      <form method="POST" action="{{ route('superadmin.merchant.tagihan') }}"
+                      <form method="POST" action="{{ route('superadmin.merchant.tagihan', $m->id) }}"
                             onsubmit="return confirm('Buat tagihan untuk semua cabang {{ $m->nama }}?')">
                         @csrf
-                        <input type="hidden" name="merchant_id" value="{{ $m->id }}">
                         <button class="btn btn-sm btn-primary" {{ $r['jumlah_cabang'] === 0 ? 'disabled' : '' }}>
                           Buat Tagihan
                         </button>

@@ -84,8 +84,16 @@ Route::middleware('auth')->group(function () {
     Route::get('tagihan', 'SuperAdmin\PanelController@tagihan')->name('superadmin.tagihan');
     Route::post('tagihan/lunas', 'SuperAdmin\PanelController@lunaskan')->name('superadmin.tagihan.lunas');
     Route::get('paket', 'SuperAdmin\PanelController@paket')->name('superadmin.paket');
-    Route::get('merchant', 'SuperAdmin\PanelController@merchant')->name('superadmin.merchant');
-    Route::post('merchant/tagihan', 'SuperAdmin\PanelController@buatTagihanMerchant')->name('superadmin.merchant.tagihan');
+    // CRUD Merchant (Tahap 5) — daftar, onboarding, detail, ubah, status, cabang, tagihan.
+    Route::get('merchant', 'SuperAdmin\MerchantController@index')->name('superadmin.merchant');
+    Route::get('merchant/create', 'SuperAdmin\MerchantController@create')->name('superadmin.merchant.create');
+    Route::post('merchant', 'SuperAdmin\MerchantController@store')->name('superadmin.merchant.store');
+    Route::get('merchant/{merchant}', 'SuperAdmin\MerchantController@show')->name('superadmin.merchant.show');
+    Route::get('merchant/{merchant}/edit', 'SuperAdmin\MerchantController@edit')->name('superadmin.merchant.edit');
+    Route::put('merchant/{merchant}', 'SuperAdmin\MerchantController@update')->name('superadmin.merchant.update');
+    Route::patch('merchant/{merchant}/status', 'SuperAdmin\MerchantController@toggleStatus')->name('superadmin.merchant.status');
+    Route::post('merchant/{merchant}/cabang', 'SuperAdmin\MerchantController@tambahCabang')->name('superadmin.merchant.tambah-cabang');
+    Route::post('merchant/{merchant}/tagihan', 'SuperAdmin\MerchantController@buatTagihan')->name('superadmin.merchant.tagihan');
     Route::get('setelan', 'SuperAdmin\PanelController@setelan')->name('superadmin.setelan');
     Route::post('setelan/simpan', 'SuperAdmin\PanelController@simpanSetelan')->name('superadmin.setelan.simpan');
   });
