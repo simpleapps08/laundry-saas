@@ -189,10 +189,10 @@
 @endsection
 @section('scripts')
 <script type="text/javascript">
-var $primary = '#7367F0';
-var $label_color = '#e7eef7';
-var $purple = '#df87f2';
-var $strok_color = '#b9c3cd';
+var $primary = '#0d9488';
+var $label_color = '#e2e8f0';
+var $purple = '#5eead4';
+var $strok_color = '#cbd5e1';
 
 // Bar data bulan
 var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

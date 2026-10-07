@@ -40,6 +40,9 @@
     <!-- END: Page CSS-->
 
     <!-- BEGIN: Custom CSS-->
+    {{-- Tema Javacom: putih · grey · tosca. Dimuat TERAKHIR supaya bisa
+         menimpa CSS template tanpa mengubah file asli. --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/css/javacom-theme.css') }}?v=1">
     <!-- END: Custom CSS-->
 
 </head>
@@ -47,7 +50,10 @@
 
 <!-- BEGIN: Body-->
 
-<body class="vertical-layout vertical-menu-modern  {{Auth::user()->theme == 1 ? 'dark-layout' : ''}} content-left-sidebar chat-application navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar" data-layout="dark-layout">
+<body class="vertical-layout vertical-menu-modern  {{Auth::user()->theme == 1 ? 'dark-layout' : ''}} content-left-sidebar chat-application navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar" data-layout="light-layout">
+
+    {{-- Aksen brand Javacom --}}
+    <div class="jv-brand-bar"></div>
 
     <!-- BEGIN: Header-->
     <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu floating-nav navbar-light navbar-shadow">
@@ -138,7 +144,7 @@
             <ul class="nav navbar-nav flex-row">
                 <li class="nav-item mr-auto"><a class="navbar-brand" href="{{url('home')}}">
                         <div class="brand-logo"></div>
-                        <h2 class="brand-text mb-0">Laundry</h2>
+                        <h2 class="brand-text mb-0">Javacom <span class="text-primary">Laundry</span></h2>
                     </a></li>
                 <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="feather icon-x d-block d-xl-none font-medium-4 primary toggle-icon"></i><i class="toggle-icon feather icon-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="icon-disc"></i></a></li>
             </ul>

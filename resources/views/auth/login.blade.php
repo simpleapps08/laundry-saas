@@ -6,7 +6,10 @@
         <div class="card bg-authentication rounded-0 mb-0">
             <div class="row m-0">
                 <div class="col-lg-6 d-lg-block d-none text-center align-self-center px-1 py-0">
-                    <img src="{{asset('backend/images/pages/login.png')}}" alt="branding logo">
+                    <div class="jv-login-brand">
+                                <div class="jv-login-logo">Javacom</div>
+                                <div class="jv-login-sub">Laundry Management System</div>
+                            </div>
                 </div>
                 <div class="col-lg-6 col-12 p-0">
                     <div class="card rounded-0 mb-0 px-2">
@@ -57,7 +60,7 @@
                         <span class="mt-1 ml-2" style="text-align: left"><a href=" {{route('password.request')}} ">Lupa Password ?</a></span>
                         <div class="login-footer">
                             <div class="divider">
-                                <div class="divider-text"><a href="/">E-Laundry</a></div>
+                                <div class="divider-text"><a href="/">Javacom Laundry</a></div>
                             </div>
                             <p style="font-size:10px;text-align:center">Build With <i class="feather icon-heart text-danger"></i> by <a href="https://andridesmana.space" target="_blank">Andri Desmana</a></p>
                         </div>
