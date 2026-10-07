@@ -59,6 +59,37 @@
     <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu floating-nav navbar-light navbar-shadow">
         <div class="navbar-wrapper">
             <div class="navbar-container content">
+            <div class="navbar-container content">
+              {{-- TAHAP 3: pemilih cabang untuk merchant multi-cabang --}}
+              @auth
+                @php
+                  $__cbg = collect();
+                  if (method_exists(auth()->user(), 'cabangIds')) {
+                      $__ids = auth()->user()->isSuperAdmin()
+                          ? \App\Models\Cabang::pluck('id')->all()
+                          : auth()->user()->cabangIds();
+                      if (count($__ids) > 1) {
+                          $__cbg = \App\Models\Cabang::whereIn('id', $__ids)->orderBy('nama')->get();
+                      }
+                  }
+                @endphp
+                @if($__cbg->count() > 1)
+                  <form method="POST" action="{{ route('merchant.ganti-cabang') }}"
+                        class="d-none d-lg-flex align-items-center ml-2">
+                    @csrf
+                    <span class="text-muted mr-50" style="font-size:12px">Cabang:</span>
+                    <select name="cabang_id" class="form-control form-control-sm py-0"
+                            style="min-width:170px;height:30px" onchange="this.form.submit()">
+                      <option value="">Semua ({{ $__cbg->count() }})</option>
+                      @foreach($__cbg as $__c)
+                        <option value="{{ $__c->id }}" {{ (int)session('cabang_aktif_id') === (int)$__c->id ? 'selected' : '' }}>
+                          {{ $__c->nama }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </form>
+                @endif
+              @endauth
                 <div class="navbar-collapse" id="navbar-mobile">
                     <div class="mr-auto float-left bookmark-wrapper d-flex align-items-center">
                         <ul class="nav navbar-nav">

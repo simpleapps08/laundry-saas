@@ -5,6 +5,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'FrontController@index');
 
+// ── TAHAP 3: Dashboard Merchant (multi-cabang) ──────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::get('merchant/dashboard', [\App\Http\Controllers\MerchantDashboardController::class, 'index'])
+        ->name('merchant.dashboard');
+    Route::post('merchant/ganti-cabang', [\App\Http\Controllers\MerchantDashboardController::class, 'gantiCabang'])
+        ->name('merchant.ganti-cabang');
+});
+
 // Frontend
 Route::get('pencarian-laundry','FrontController@search');
 
