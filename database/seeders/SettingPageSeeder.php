@@ -15,7 +15,7 @@ class SettingPageSeeder extends Seeder
     public function run()
     {
       $setpage = PageSettings::create([
-        'judul'   => 'E-Laundry'
+        'judul'   => 'Javacom Laundry'
       ]);
     }
 }

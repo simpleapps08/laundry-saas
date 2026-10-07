@@ -6,9 +6,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description" content="E-Laundy aplikasi laundry berbasis website">
-    <meta name="keywords" content="E-Laundry,Laundry">
-    <meta name="author" content="Andri Desmana">
+    <meta name="description" content="Javacom Laundry — sistem kasir dan manajemen usaha laundry berbasis web">
+    <meta name="keywords" content="Javacom Laundry,Laundry,Javacom Laundry,Sistem Laundry">
+    <meta name="author" content="Javacom">
     <title>@yield('title')</title>
     <link rel="apple-touch-icon" href="../../../app-assets/images/ico/apple-icon-120.png">
     <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/ico/favicon.ico">

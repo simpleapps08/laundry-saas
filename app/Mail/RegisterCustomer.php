@@ -30,7 +30,7 @@ class RegisterCustomer extends Mailable
     public function build()
     {
         $address = config("mail.from.address");
-        $name = 'E-Laundry';
+        $name = 'Javacom Laundry';
 
         return $this->view('emails.register')
         ->subject('Laundry Registrasi')

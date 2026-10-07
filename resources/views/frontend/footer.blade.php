@@ -7,9 +7,9 @@
             <div class="col-xl-4 col-lg-4 col-12">
                 <!-- begin section-container -->
                 <div class="section-container">
-                    <h4>Tentang E-Laundry</h4>
+                    <h4>Tentang Javacom Laundry</h4>
                     <p>
-                      {{$setpage != NULL ? $setpage->tentang : 'Tentang belum disini'}}
+                      {{$setpage != NULL ? $setpage->tentang : 'Sistem kasir & manajemen usaha laundry dari Javacom — Digital Growth Partner.'}}
                     </p>
                 </div>
                 <!-- end section-container -->

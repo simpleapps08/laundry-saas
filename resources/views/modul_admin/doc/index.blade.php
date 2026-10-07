@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-@section('title','Dokumentasi Aplikasi Laundry')
+@section('title','Dokumentasi Javacom Laundry')
 @section('content')
 
   <section id="knowledge-base-search">
@@ -7,7 +7,7 @@
           <div class="col-12">
               <div class="card knowledge-base-bg text-center" style="background-image: url({{asset('backend/images/pages/banner.png')}}">
                   <div class="card-body">
-                      <h2 class="text-primary">Dokumentasi Penggunaan Aplikasi Laundry</h2>
+                      <h2 class="text-primary">Dokumentasi Penggunaan Javacom Laundry</h2>
                       <p class="card-text mb-2">
                           <span>Halo, halaman ini digunakan untuk keperluan dokumentasi penggunaan pada pada aplikasi Laundry. Dokumentasi ini dibuat untuk mempermudah teman-teman dalam penggunaan aplikasi Laundry.</span>
                       </p>
@@ -28,7 +28,7 @@
                   <div class="card-body text-center">
                       <h4>Tentang Aplikasin Laundry</h4>
                       <p class="text-body mt-1 mb-0">
-                          Beberapa hal yang perlu diketahui tentang Aplikasi Laundry.
+                          Beberapa hal yang perlu diketahui tentang Javacom Laundry.
                       </p>
                   </div>
               </a>
@@ -85,7 +85,7 @@
   <section class="faq-contact">
       <div class="row mt-2 pt-75">
           <div class="col-12 text-center">
-              <h2>Punya Pertanyaan ?</h2>
+              <h2>Butuh Bantuan?</h2>
               <p class="mb-3">
               </p>
           </div>
@@ -93,10 +93,10 @@
               <div class="card text-center faq-contact-card shadow-none py-1">
                   <div class="card-body">
                       <div class="avatar avatar-tag bg-light-primary mb-2 mx-auto">
-                          <i class="font-medium-3 feather icon-message-circle"></i>
+                          <i class="font-medium-3 feather icon-phone-call"></i>
                       </div>
-                      <h4><a href="https://t.me/andridesmana">Telegram</a></h4>
-                      <span class="text-body">Best way to get answer faster!</span>
+                      <h4><a href="https://wa.me/6285196269837" target="_blank">WhatsApp</a></h4>
+                      <span class="text-body">Respon cepat pada jam kerja (Sen–Jum 08.00–17.00 WIB)</span>
                   </div>
               </div>
           </div>
@@ -106,8 +106,8 @@
                       <div class="avatar avatar-tag bg-light-primary mb-2 mx-auto">
                           <i class="font-medium-3 feather icon-mail"></i>
                       </div>
-                      <h4><a href="mailto:andridesmana29@outlook.com">andridesmana29@outlook.com</a> </h4>
-                      <span class="text-body">Saya selalu senang mambantu!</span>
+                      <h4><a href="mailto:javacom.dev@gmail.com">javacom.dev@gmail.com</a> </h4>
+                      <span class="text-body">Tim Javacom siap membantu kebutuhan Anda</span>
                   </div>
               </div>
           </div>

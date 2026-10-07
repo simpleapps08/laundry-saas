@@ -6,9 +6,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description" content="E-Laundy aplikasi laundry berbasis website">
-    <meta name="keywords" content="E-Laundry,Laundry">
-    <meta name="author" content="Andri Desmana">
+    <meta name="description" content="Javacom Laundry — sistem kasir dan manajemen usaha laundry berbasis web">
+    <meta name="keywords" content="Javacom Laundry,Laundry,Javacom Laundry,Sistem Laundry">
+    <meta name="author" content="Javacom">
     <title>@yield('title')</title>
     <link rel="apple-touch-icon" href="{{asset('backend/images/ico/apple-icon-120.png')}}">
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('backend/images/ico/favicon.ico')}}">
@@ -272,7 +272,7 @@
 
     <!-- BEGIN: Footer-->
     <footer class="footer footer-static footer-light">
-        <p class="clearfix blue-grey lighten-2 mb-0"><span class="float-md-left d-block d-md-inline-block mt-25">COPYRIGHT &copy; 2020 - {{date('Y')}}<a class="text-bold-800 grey darken-2" href="https://andridesmana.space" target="_blank">Andri Desmana,</a>All rights Reserved</span><span class="float-md-right d-none d-md-block">Build With <i class="feather icon-heart pink"></i></span>
+        <p class="clearfix blue-grey lighten-2 mb-0"><span class="float-md-left d-block d-md-inline-block mt-25">COPYRIGHT &copy; 2020 - {{date('Y')}}<a class="text-bold-800 grey darken-2" href="https://javacom.co.id" target="_blank">Javacom,</a>All rights Reserved</span><span class="float-md-right d-none d-md-block">Build With <i class="feather icon-heart pink"></i></span>
             <button class="btn btn-primary btn-icon scroll-top" type="button"><i class="feather icon-arrow-up"></i></button>
         </p>
     </footer>

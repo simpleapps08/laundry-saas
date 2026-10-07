@@ -1,5 +1,5 @@
 @extends('layouts.backend')
-@section('title','Tentang Aplikasi | Dokumentasi Aplikasi Laundry')
+@section('title','Tentang Aplikasi | Dokumentasi Javacom Laundry')
 @section('content')
   <section id="knowledge-base-question">
     <div class="row">
@@ -9,15 +9,14 @@
               <div class="card-body">
                   <h4 class="card-title mb-1">
                       <i data-feather="smartphone" class="font-medium-5 mr-25"></i>
-                      <span>Aplikasi Laundry</span> <hr>
+                      <span>Javacom Laundry</span> <hr>
                   </h4>
                   <p>
-                    Halo, ini adalah aplikasi Laundry yang dibangun dengan Framwork Laravel. Aplikasi ini sudah bisa multi toko, dengan kata lain kamu bisa membuat cabang laundry. <br>
-                    <h5>Sekilas Utas</h5>
-                    Aplikasi Laundry mulai di develop di tahun 2019, pada saat itu aplikasi ini dibuat hanya untuk keperluan protofolio saja. Seiring dengan berjalan nya waktu aplikasi ini mulai di kenal banyak orang. Akhirnya saya memutuskan untuk menambah fitur-fitur baru serta memperbaiki hal-hal yang kurang demi kenyamanan pengguna nya. <br> <br>
-
-                    <h5>Ucapan Terima Kasih</h5>
-                    Saya ingin mengucapkan terima kasih kepada teman-teman yang sudah menggunakan aplikasi Laundry sebagai bahan belajar atau digunakan untuk keperluan pribadi sebagai penunjang usaha Laundry kalian. Terima kasih juga untuk teman-teman yang sudah membagikan sedikit rezeki nya kepada saya melalu <a href="https://saweria.co/andes2912">Saweria</a>, dukungan kalian amat sangat berharga buat saya.
+                    Javacom Laundry adalah sistem kasir dan manajemen usaha laundry yang dibangun untuk membantu pemilik usaha bekerja lebih rapi dan efisien. Aplikasi ini sudah mendukung <b>multi cabang</b>, sehingga Anda dapat mengelola beberapa outlet dalam satu sistem terpusat. <br>
+                    <h5>Dikembangkan oleh Javacom</h5>
+                    Javacom adalah Digital Growth Partner yang membantu bisnis dan organisasi membangun sistem digital yang lebih terstruktur, efisien, aman, dan siap berkembang. Setiap sistem dibangun dengan mengutamakan kesesuaian proses bisnis, keamanan data, kemudahan penggunaan, dan pemeliharaan jangka panjang.<br><br>
+                    <h5>Dukungan</h5>
+                    Butuh bantuan, penyesuaian fitur, atau integrasi tambahan? Tim Javacom siap membantu melalui WhatsApp atau email yang tertera di bawah.
                   </p>
               </div>
           </div>
@@ -28,7 +27,7 @@
   <section class="faq-contact">
       <div class="row mt-2 pt-75">
           <div class="col-12 text-center">
-              <h2>Punya Pertanyaan ?</h2>
+              <h2>Butuh Bantuan?</h2>
               <p class="mb-3">
               </p>
           </div>
@@ -36,10 +35,10 @@
               <div class="card text-center faq-contact-card shadow-none py-1">
                   <div class="card-body">
                       <div class="avatar avatar-tag bg-light-primary mb-2 mx-auto">
-                          <i class="font-medium-3 feather icon-message-circle"></i>
+                          <i class="font-medium-3 feather icon-phone-call"></i>
                       </div>
-                      <h4><a href="https://t.me/andridesmana">Telegram</a></h4>
-                      <span class="text-body">Best way to get answer faster!</span>
+                      <h4><a href="https://wa.me/6285196269837" target="_blank">WhatsApp</a></h4>
+                      <span class="text-body">Respon cepat pada jam kerja (Sen–Jum 08.00–17.00 WIB)</span>
                   </div>
               </div>
           </div>
@@ -49,8 +48,8 @@
                       <div class="avatar avatar-tag bg-light-primary mb-2 mx-auto">
                           <i class="font-medium-3 feather icon-mail"></i>
                       </div>
-                      <h4><a href="mailto:andridesmana29@outlook.com">andridesmana29@outlook.com</a> </h4>
-                      <span class="text-body">Saya selalu senang mambantu!</span>
+                      <h4><a href="mailto:javacom.dev@gmail.com">javacom.dev@gmail.com</a> </h4>
+                      <span class="text-body">Tim Javacom siap membantu kebutuhan Anda</span>
                   </div>
               </div>
           </div>

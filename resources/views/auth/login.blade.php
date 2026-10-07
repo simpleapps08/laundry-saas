@@ -62,7 +62,7 @@
                             <div class="divider">
                                 <div class="divider-text"><a href="/">Javacom Laundry</a></div>
                             </div>
-                            <p style="font-size:10px;text-align:center">Build With <i class="feather icon-heart text-danger"></i> by <a href="https://andridesmana.space" target="_blank">Andri Desmana</a></p>
+                            <p style="font-size:10px;text-align:center">Build With <i class="feather icon-heart text-danger"></i> by <a href="https://javacom.co.id" target="_blank">Javacom</a></p>
                         </div>
                     </div>
                 </div>

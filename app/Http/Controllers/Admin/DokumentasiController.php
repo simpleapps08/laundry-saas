@@ -13,7 +13,7 @@ class DokumentasiController extends Controller
     return view('modul_admin.doc.index');
   }
 
-  // Tentang Aplikasi Laundry
+  // Tentang Javacom Laundry
   public function tentang()
   {
     return view('modul_admin.doc.tentang');

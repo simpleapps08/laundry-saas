@@ -30,7 +30,7 @@ class DoneCustomer extends Mailable
     public function build()
     {
         $address = config("mail.from.address");
-        $name = 'E-Laundry';
+        $name = 'Javacom Laundry';
 
         return $this->view('emails.done')
         ->subject('Laundry Selesai')

@@ -89,10 +89,10 @@ Repositori ini dipublikasikan untuk tujuan **showcase**. Public visibility ≠ i
 
 ## 📞 Kontak
 
-- 📧 **Email**: andridesmana29@gmail.com
-- 🌐 **Website**: https://andridesmana.dev
+- 📧 **Email**: javacom.dev@gmail.com
+- 🌐 **Website**: https://javacom.co.id
 - 💬 **WhatsApp**: Hubungi via website untuk akses langsung
 
 ---
 
-<sub>Built with ❤️ by [Andri Desmana](https://andridesmana.dev) · © 2026 All Rights Reserved</sub>
+<sub>Built with ❤️ by [Javacom](https://javacom.co.id) · © 2026 All Rights Reserved</sub>

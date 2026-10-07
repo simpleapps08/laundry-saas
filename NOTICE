@@ -1,0 +1,30 @@
+NOTICE
+======
+
+Javacom Laundry
+Copyright (c) 2026 Javacom — https://javacom.co.id
+
+---
+
+Aplikasi ini dibangun di atas perangkat lunak sumber terbuka berikut:
+
+1. "Aplikasi Laundry" (https://github.com/andes2912/laundry)
+   Copyright (c) 2021 Andri Desmana
+   Lisensi: MIT License
+
+   Kode sumber asli telah dimodifikasi secara substansial untuk kebutuhan
+   Javacom Laundry (arsitektur multi-tenant SaaS, skema database baru,
+   lapisan langganan, dan antarmuka bermerek Javacom).
+
+   Teks lengkap lisensi MIT tercantum pada berkas LICENSE pada repositori ini.
+
+2. Laravel Framework — Copyright (c) Taylor Otwell — Lisensi MIT
+
+3. Seluruh dependensi pihak ketiga lain tercantum pada berkas composer.json
+   dan composer.lock, masing-masing dengan lisensinya sendiri.
+
+---
+
+Kewajiban atribusi MIT dipenuhi melalui berkas LICENSE dan NOTICE ini.
+Atribusi pada antarmuka pengguna telah digantikan dengan identitas Javacom
+sesuai kesepakatan pemilik produk.
