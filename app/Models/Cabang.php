@@ -27,6 +27,7 @@ class Cabang extends Model
         'no_telp',
         'email',
         'pemilik_id',
+        'merchant_id',
         'status',
         'logo',
         'catatan_kaki',
@@ -43,6 +44,24 @@ class Cabang extends Model
     public function pemilik(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pemilik_id');
+    }
+
+    /**
+     * Merchant pemilik cabang ini (tingkat di atas cabang).
+     */
+    public function merchant(): BelongsTo
+    {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
+
+    /**
+     * User yang punya akses ke cabang ini (many-to-many via cabang_user).
+     */
+    public function penggunaAkses(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'cabang_user', 'cabang_id', 'user_id')
+            ->withPivot('peran_di_cabang')
+            ->withTimestamps();
     }
 
     public function users(): HasMany
