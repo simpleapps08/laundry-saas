@@ -14,10 +14,12 @@ class SettingsController extends Controller
   // Settings
   public function setting()
   {
-    $setpage    = PageSettings::first();
-    $settarget  = LaundrySetting::first();
+    // FIX: dulu first() bisa null (tabel kosong) -> view error 500.
+    // Sekarang disediakan instance kosong agar view tetap tampil.
+    $setpage    = PageSettings::first() ?: new PageSettings();
+    $settarget  = LaundrySetting::first() ?: new LaundrySetting();
     $databank   = DataBank::where('user_id',Auth::id())->get();
-    $setnotif   = notifications_setting::first();
+    $setnotif   = notifications_setting::first() ?: new notifications_setting();
 
     return view('modul_admin.setting.index', compact('setpage','settarget','databank','setnotif'));
   }
@@ -37,7 +39,7 @@ class SettingsController extends Controller
         $img_hero->move($tujuan_upload, $img_heros);
     }
 
-    $setpage = PageSettings::find($id);
+    $setpage = PageSettings::find($id) ?: new PageSettings();
     $setpage->judul     = $request->judul;
     $setpage->img_hero  = $img_hero;
     $setpage->tentang   = $request->tentang;

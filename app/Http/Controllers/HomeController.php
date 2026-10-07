@@ -206,14 +206,37 @@ class HomeController extends Controller
     }
 
     // Read Notifikasi
+    // FIX: dulu `Notification::find($request->id)` tanpa id -> null -> update()
+    // memicu 500. Sekarang id divalidasi dan ketiadaan notifikasi ditangani rapi.
     public function readNotifikasi(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+        ]);
+
         $notif = Notification::find($request->id);
+
+        if (! $notif) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Notifikasi tidak ditemukan.'], 404);
+            }
+            return redirect()->back()->with('error','Notifikasi tidak ditemukan.');
+        }
+
+        // Hanya pemilik notifikasi yang boleh menandainya terbaca.
+        if ($notif->user_id && $notif->user_id != Auth::id()) {
+            abort(403, 'Notifikasi ini bukan milik Anda.');
+        }
+
         $notif->update([
             'is_read'   => 1
         ]);
 
-        return $notif;
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json($notif);
+        }
+
+        return redirect()->back();
     }
 
 }

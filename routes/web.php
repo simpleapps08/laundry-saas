@@ -28,7 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('customer','Admin\CustomerController');
 
     // Data Transaksi
-    Route::resource('transaksi','Admin\TransaksiController');
+    // Keputusan Boz: transaksi hanya boleh DITAMBAH + DIBATALKAN, tidak diedit.
+    // Method edit/update sengaja tidak diimplementasi -> jangan didaftarkan
+    // supaya URL-nya 404, bukan 500.
+    Route::resource('transaksi','Admin\TransaksiController')->only(['index','create','store','show','destroy']);
     Route::get('filter-transaksi','Admin\TransaksiController@filtertransaksi'); // filter data transaksi by karyawan
     Route::get('invoice-customer/{invoice}','Admin\TransaksiController@invoice'); // lihat invoice
 
@@ -77,7 +80,9 @@ Route::middleware('auth')->group(function () {
 
   // Modul Karyawan
   Route::prefix('/')->middleware('role:Karyawan')->group(function () {
-    Route::resource('pelayanan','Karyawan\PelayananController');
+    // PelayananController hanya menyediakan index/store/show/create.
+    // edit/update/destroy tidak diimplementasi -> dibatasi agar 404, bukan 500.
+    Route::resource('pelayanan','Karyawan\PelayananController')->only(['index','create','store','show']);
     // Transaksi
     Route::get('add-order','Karyawan\PelayananController@addorders');
     Route::get('update-status-laundry','Karyawan\PelayananController@updateStatusLaundry');

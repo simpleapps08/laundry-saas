@@ -30,6 +30,31 @@ class PelayananController extends Controller
     }
 
     // Proses simpan order
+    /**
+     * Form tambah pelayanan.
+     *
+     * Route::resource('pelayanan', ...) mendaftarkan create() tapi method-nya
+     * tidak ada -> BadMethodCallException (500). Diarahkan ke form order yang
+     * sudah dipakai di frontend.
+     */
+    public function create()
+    {
+      return redirect('add-order');
+    }
+
+    /**
+     * Detail pelayanan.
+     */
+    public function show($id)
+    {
+      $transaksi = transaksi::with('price')
+        ->where('invoice', $id)
+        ->orWhere('id', $id)
+        ->firstOrFail();
+
+      return redirect(url('invoice-kar', $transaksi->id));
+    }
+
     public function store(AddOrderRequest $request)
     {
       try {

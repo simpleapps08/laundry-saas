@@ -2,6 +2,14 @@
 @section('title','Admin - Settings')
 @section('header','Settings')
 @section('content')
+@if (! $setpage->id || ! $settarget->id)
+  <div class="alert alert-warning alert-block">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Pengaturan belum diinisialisasi.</strong>
+    Baris pengaturan website/laundry masih kosong di database, jadi nilai di
+    bawah ini belum tersimpan. Hubungi pengelola sistem untuk membuat baris awal.
+  </div>
+@endif
 @if ($message = Session::get('success'))
   <div class="alert alert-success alert-block">
   <button type="button" class="close" data-dismiss="alert">×</button>
@@ -64,7 +72,10 @@
               <div class="tab-content">
                 {{-- Panel General --}}
                 <div role="tabpanel" class="tab-pane active" id="vertical-general" aria-labelledby="pill-general" aria-expanded="true">
-                  <form action="{{route('seting-page.update', $setpage->id)}}" method="POST">
+                  {{-- FIX: $setpage bisa belum punya id (tabel kosong) ->
+                       route() tanpa parameter melempar 500. Bila id belum ada,
+                       form diarahkan ke halaman ini sendiri (read-only notice). --}}
+                  <form action="{{ $setpage->id ? route('seting-page.update', $setpage->id) : '#' }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="row">

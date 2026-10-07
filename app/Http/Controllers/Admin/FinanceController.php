@@ -66,7 +66,9 @@ class FinanceController extends Controller
     })
     ->get();
 
-    $target = LaundrySetting::first();
+    // FIX: dulu first() bisa null (LaundrySetting kosong) -> view baca
+    // $target->target_day -> 500. Sediakan instance kosong.
+    $target = LaundrySetting::first() ?: new LaundrySetting();
 
     return view('modul_admin.finance.index', \compact(
       'chartMonth','incomeY','incomeM','incomeYOld','incomeD','incomeDOld',
@@ -110,16 +112,42 @@ class FinanceController extends Controller
     // Proses edit harga
     public function hargaedit(Request $request)
     {
-      $editharga = harga::find($request->id_harga);
-      $editharga->update([
-          'jenis' => $request->jenis,
-          'kg'    => $request->kg,
-          'harga' => $request->harga,
-          'hari' => $request->hari,
-          'status' => $request->status,
+      // FIX: dulu harga::find($request->id_harga) tanpa id -> null ->
+      // update() pada null -> 500. Sekarang id divalidasi.
+      $request->validate([
+        'id_harga' => 'required',
       ]);
-      Session::flash('success','Edit Data Harga Berhasil');
-      return $editharga;
 
+      $editharga = harga::find($request->id_harga);
+
+      if (! $editharga) {
+        Session::flash('error','Data harga tidak ditemukan.');
+        if ($request->expectsJson() || $request->ajax()) {
+          return response()->json(['error' => 'Data harga tidak ditemukan.'], 404);
+        }
+        return redirect('finance');
+      }
+
+      $data = [
+        'jenis'  => $request->jenis,
+        'kg'     => $request->kg,
+        'harga'  => $request->harga,
+        'hari'   => $request->hari,
+        'status' => $request->status,
+      ];
+
+      // Selaraskan kolom numerik (Fase 1) supaya laporan SUM() tetap benar.
+      if ($request->filled('kg'))    $data['kg_numeric']    = (float) $request->kg;
+      if ($request->filled('harga')) $data['harga_numeric'] = (float) $request->harga;
+
+      $editharga->update($data);
+
+      Session::flash('success','Edit Data Harga Berhasil');
+
+      if ($request->expectsJson() || $request->ajax()) {
+        return response()->json($editharga);
+      }
+
+      return redirect('finance');
     }
 }
