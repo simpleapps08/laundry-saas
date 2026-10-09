@@ -31,6 +31,36 @@
         body {
             overflow-x: hidden;
         }
+
+        /* ── Navbar CTA (menu Harga / Coba Gratis) ──────────────────
+           Tombol ajakan daftar di navbar kanan. Bootstrap 3 default
+           navbar-dark; tombol perlu warna kontras sendiri. */
+        .navbar .btn-nav-cta {
+            background: #ffd700;
+            color: #0b1326 !important;
+            font-weight: 700;
+            border-radius: 8px;
+            margin-top: 9px;
+            padding: 8px 18px !important;
+            line-height: 1.4 !important;
+            transition: .2s;
+        }
+        .navbar .btn-nav-cta:hover,
+        .navbar .btn-nav-cta:focus {
+            background: #e6c200;
+            color: #0b1326 !important;
+        }
+        /* Di layar kecil, tombol jadi penuh lebar supaya mudah ditekan. */
+        @media (max-width: 767px) {
+            .navbar .btn-nav-cta {
+                margin: 6px 15px 12px;
+                text-align: center;
+                display: block;
+            }
+        }
+        /* Anchor "Lacak Cucian" — beri offset supaya judul tidak
+           tertutup navbar yang position:fixed. */
+        #lacak { scroll-margin-top: 80px; }
     </style>
 </head>
 <body>

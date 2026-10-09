@@ -5,41 +5,39 @@
         <div class="row">
             <!-- begin col-4 -->
             <div class="col-xl-4 col-lg-4 col-12">
-                <!-- begin section-container -->
                 <div class="section-container">
                     <h4>Tentang Javacom Laundry</h4>
                     <p>
                       {{$setpage != NULL ? $setpage->tentang : 'Sistem kasir & manajemen usaha laundry dari Javacom — Digital Growth Partner.'}}
                     </p>
                 </div>
-                <!-- end section-container -->
             </div>
             <!-- end col-4 -->
+
             <!-- begin col-4 -->
             <div class="col-xl-4 col-lg-4 col-12">
-                <!-- begin section-container -->
                 <div class="section-container">
-                    <h4>Ketentuan</h4>
+                    <h4>Informasi</h4>
                     <ul class="latest-post">
                       <li>
-                        <a href="">FAQ</a>
+                        <a href="{{ route('signup.harga') }}">Harga &amp; Paket</a>
                       </li>
-
                       <li>
-                        <a href="">Join Laundry</a>
+                        <a href="{{ route('signup.harga') }}">Coba Gratis 14 Hari</a>
                       </li>
-
                       <li>
-                        <a href="">Investasi</a>
+                        <a href="{{ url('/') }}#lacak">Lacak Status Cucian</a>
+                      </li>
+                      <li>
+                        <a href="{{ route('login') }}">Masuk ke Dashboard</a>
                       </li>
                     </ul>
                 </div>
-                <!-- end section-container -->
             </div>
             <!-- end col-4 -->
+
             <!-- begin col-4 -->
             <div class="col-xl-4 col-lg-4 col-12">
-                <!-- begin section-container -->
                 <div class="section-container">
                     <h4>Hubungi Kami</h4>
                     <ul class="new-user">
@@ -70,7 +68,6 @@
                       </li>
                     </ul>
                 </div>
-                <!-- end section-container -->
             </div>
             <!-- end col-4 -->
         </div>

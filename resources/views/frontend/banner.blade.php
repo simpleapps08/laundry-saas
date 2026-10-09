@@ -4,7 +4,7 @@
     </div>
     <!-- end bg-cover -->
     <!-- begin container -->
-    <div class="container">
+    <div class="container" id="lacak">
         <h3>Lacak Status Laundry Kamu Disini...</h3>
         <div class="input-group m-b-20">
             <input type="text" class="form-control input-lg" id="search_status" placeholder="Contoh : TR0392928" />
