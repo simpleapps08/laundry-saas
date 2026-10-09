@@ -53,11 +53,34 @@
                                         </div>
                                         <label for="user-password">Password</label>
                                     </fieldset>
-                                    <button type="submit" class="btn btn-primary float-right btn-inline btn-block">Login</button>
+                                    <button type="submit" class="btn btn-primary float-right btn-inline btn-block jv-auth-primary">Masuk</button>
+
+                                    <div class="jv-auth-row">
+                                        <span class="jv-auth-link">Belum punya akun?</span>
+                                        <a href="{{ route('password.request') }}" class="jv-auth-link">Lupa Password?</a>
+                                    </div>
                                 </form>
                             </div>
                         </div>
-                        <span class="mt-1 ml-2" style="text-align: left"><a href=" {{route('password.request')}} ">Lupa Password ?</a></span>
+
+                        {{-- Pintu masuk pendaftaran mandiri (Tahap A).
+                             Halaman /login sebelumnya hanya punya tombol Login,
+                             sehingga calon klien TIDAK punya jalan mendaftar.
+                             Tombol sekunder (outline tosca) supaya hierarki tetap
+                             jelas: Login dulu, daftar sebagai alternatif. --}}
+                        <div class="px-2">
+                            <div class="jv-auth-sep"><span>atau</span></div>
+                            <p class="jv-auth-invite">
+                                Baru di <strong>Javacom Laundry</strong>?
+                            </p>
+                            <a href="{{ route('signup.harga') }}" class="jv-auth-secondary">
+                                <i class="feather icon-user-plus"></i>Daftar Gratis 14 Hari
+                            </a>
+                            <p class="jv-auth-benefit">
+                                <i class="feather icon-check"></i>Tanpa kartu kredit
+                                &middot; <i class="feather icon-check"></i>Langsung pakai
+                            </p>
+                        </div>
                         <div class="login-footer">
                             <div class="divider">
                                 <div class="divider-text"><a href="/">Javacom Laundry</a></div>

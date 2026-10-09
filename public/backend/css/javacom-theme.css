@@ -489,3 +489,99 @@ table.dataTable thead .sorting:after { opacity: .25; }
   font-size: .95rem;
   color: rgba(255, 255, 255, .88);
 }
+
+
+/* ==========================================================================
+   TOMBOL AUTH — pemisah Login (primary) vs Daftar (secondary)
+   Ditambahkan 9-Okt-2026. Halaman login sebelumnya hanya punya tombol Login +
+   tautan "Lupa Password", sehingga calon klien yang BELUM punya akun tidak
+   punya jalan mendaftar dari halaman ini.
+
+   Hierarki sengaja dibedakan supaya mata tetap diarahkan ke Login dulu:
+     .jv-auth-primary   -> tosca solid   (aksi utama)
+     .jv-auth-secondary -> outline tosca (aksi alternatif)
+   Pakai token tema yang sudah ada; tosca tombol #0e8175 lolos WCAG AA.
+   ========================================================================== */
+.jv-auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: .25rem;
+}
+.jv-auth-row .jv-auth-link {
+  font-size: .875rem;
+  color: var(--jv-grey-500);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.jv-auth-row .jv-auth-link:hover,
+.jv-auth-row .jv-auth-link:focus {
+  color: var(--jv-tosca-dark);
+  text-decoration: underline;
+}
+
+/* Pemisah "atau" — garis + label, memberi jeda visual antar dua aksi */
+.jv-auth-sep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.1rem 0 .9rem;
+  color: var(--jv-grey-400);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.jv-auth-sep::before,
+.jv-auth-sep::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--jv-border);
+}
+
+/* Ajakan daftar + tombol sekunder */
+.jv-auth-invite {
+  text-align: center;
+  font-size: .9rem;
+  color: var(--jv-grey-600);
+  margin-bottom: .85rem;
+}
+.jv-auth-invite strong { color: var(--jv-grey-900); }
+
+.jv-auth-secondary {
+  display: block;
+  width: 100%;
+  padding: .55rem 1rem;
+  border: 1.5px solid var(--jv-tosca);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--jv-tosca-dark) !important;
+  font-weight: 600;
+  font-size: .95rem;
+  text-align: center;
+  text-decoration: none !important;
+  transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.jv-auth-secondary:hover,
+.jv-auth-secondary:focus {
+  background: var(--jv-tosca);
+  color: #fff !important;
+  box-shadow: var(--jv-shadow-md);
+}
+.jv-auth-secondary i { margin-right: 6px; }
+
+/* Manfaat singkat di bawah tombol — mengurangi keraguan sebelum klik daftar */
+.jv-auth-benefit {
+  margin-top: .7rem;
+  text-align: center;
+  font-size: .78rem;
+  color: var(--jv-grey-500);
+  line-height: 1.5;
+}
+.jv-auth-benefit i { color: var(--jv-success); margin-right: 4px; }
+
+@media (max-width: 575.98px) {
+  .jv-auth-row { flex-direction: column; align-items: stretch; gap: 8px; }
+  .jv-auth-row .jv-auth-link { text-align: center; }
+}

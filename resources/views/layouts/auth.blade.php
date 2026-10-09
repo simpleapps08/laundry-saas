@@ -31,7 +31,7 @@
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('backend/css/style.css')}}">
     {{-- Tema Javacom (putih · grey · tosca) --}}
-    <link rel="stylesheet" type="text/css" href="{{ asset('backend/css/javacom-theme.css') }}?v=1">
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/css/javacom-theme.css') }}?v={{ @filemtime(public_path('backend/css/javacom-theme.css')) ?: 1 }}">
     <!-- END: Custom CSS-->
 
 </head>
