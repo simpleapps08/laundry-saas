@@ -59,9 +59,86 @@
       .row2{grid-template-columns:1fr}
       .head h1{font-size:22px}
     }
+  
+  /* ── Navbar publik (dipinjam dari layout frontend) ──────────────────
+     Halaman /daftar tidak memuat bootstrap3, jadi navbar di-style manual
+     dengan token warna yang sama supaya konsisten dengan halaman utama. */
+  .jc-nav{position:sticky;top:0;z-index:1000;background:#0b1326;
+    border-bottom:1px solid rgba(255,255,255,.08);padding:0 20px}
+  .jc-nav__in{max-width:1080px;margin:0 auto;display:flex;align-items:center;
+    justify-content:space-between;height:64px;gap:16px}
+  .jc-nav__brand{display:flex;align-items:center;gap:9px;color:#fff;font-weight:700;
+    font-size:16.5px;text-decoration:none;white-space:nowrap}
+  .jc-nav__brand:hover,.jc-nav__brand:focus{color:#fff;text-decoration:none}
+  .jc-nav__mark{width:26px;height:26px;border-radius:7px;flex:0 0 26px;
+    background:linear-gradient(135deg,#14b8a6,#0d9488);position:relative}
+  .jc-nav__mark:after{content:"";position:absolute;inset:7px 6px;border-radius:2px;
+    background:#fff;clip-path:polygon(0 0,100% 0,100% 42%,0 42%,0 58%,100% 58%,100% 100%,0 100%)}
+  .jc-nav__links{display:flex;align-items:center;gap:6px;list-style:none;margin:0;padding:0}
+  .jc-nav__links a{color:#c3cddd;text-decoration:none;font-size:14.5px;font-weight:500;
+    padding:8px 13px;border-radius:8px;display:inline-block;transition:.18s}
+  .jc-nav__links a:hover,.jc-nav__links a:focus{color:#fff;background:rgba(255,255,255,.07);
+    text-decoration:none}
+  .jc-nav__links a.jc-nav__cta{background:#ffd700;color:#0b1326;font-weight:700;
+    padding:9px 18px;margin-left:6px}
+  .jc-nav__links a.jc-nav__cta:hover,.jc-nav__links a.jc-nav__cta:focus{
+    background:#e6c200;color:#0b1326}
+  .jc-nav__toggle{display:none;background:none;border:1px solid rgba(255,255,255,.25);
+    border-radius:8px;padding:7px 9px;cursor:pointer;line-height:0}
+  .jc-nav__toggle span{display:block;width:20px;height:2px;background:#fff;margin:4px 0;
+    border-radius:2px}
+  @media(max-width:820px){
+    .jc-nav__toggle{display:block}
+    .jc-nav__in{flex-wrap:wrap;height:auto;min-height:64px;padding:10px 0}
+    .jc-nav__links{display:none;width:100%;flex-direction:column;align-items:stretch;
+      gap:2px;padding:6px 0 12px}
+    .jc-nav__links.jc-open{display:flex}
+    .jc-nav__links a{padding:11px 12px;font-size:15px}
+    .jc-nav__links a.jc-nav__cta{margin:8px 0 0;text-align:center}
+  }
+  /* Kompensasi karena navbar sticky menggantikan posisi hero */
+  .jc-nav + .hero{padding-top:56px}
+
   </style>
 </head>
 <body>
+
+{{-- Navbar publik — SATU sumber dengan halaman utama (frontend/header.blade.php).
+     Halaman /daftar tidak memakai layout frontend (punya CSS sendiri), jadi
+     navbar-nya direplikasi di sini dengan struktur & tautan yang identik.
+     Kalau mengubah menu di header.blade.php, samakan di sini juga. --}}
+<nav class="jc-nav">
+  <div class="jc-nav__in">
+    <a href="{{ url('/') }}" class="jc-nav__brand">
+      <span class="jc-nav__mark"></span>
+      <span>{{ $setpage != null && $setpage->judul ? $setpage->judul : 'Javacom Laundry' }}</span>
+    </a>
+
+    <button type="button" class="jc-nav__toggle" id="jc-nav-toggle" aria-label="Buka menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="jc-nav__links" id="jc-nav-links">
+      <li><a href="{{ url('/') }}">Home</a></li>
+      <li><a href="{{ route('signup.harga') }}">Harga</a></li>
+      <li><a href="{{ url('/') }}#lacak">Lacak Cucian</a></li>
+      @auth
+        <li><a href="{{ url('/home') }}">Dashboard</a></li>
+      @else
+        <li><a href="{{ route('login') }}">Masuk</a></li>
+        <li><a href="{{ route('signup.form') }}" class="jc-nav__cta">Coba Gratis 14 Hari</a></li>
+      @endauth
+    </ul>
+  </div>
+</nav>
+<script>
+  (function () {
+    var t = document.getElementById('jc-nav-toggle');
+    var l = document.getElementById('jc-nav-links');
+    if (t && l) t.addEventListener('click', function () { l.classList.toggle('jc-open'); });
+  })();
+</script>
+
 
 <div class="top">
   <div class="wrap">

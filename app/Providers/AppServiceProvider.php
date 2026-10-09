@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,21 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+        // ── $setpage tersedia di SEMUA view ────────────────────────────
+        // Sebelumnya hanya FrontController yang mengirim $setpage, sehingga
+        // halaman publik lain (/daftar, /daftar/form) yang memakai navbar
+        // gagal render (variabel tidak terdefinisi). View Composer
+        // menyentralisasi ini: satu sumber, semua view dapat.
+        //
+        // Pakai '*' supaya juga mencakup partial (header.blade.php) yang
+        // di-@include, bukan hanya view utama.
+        View::composer('*', function ($view) {
+            // Jangan timpa kalau controller sudah mengirim nilai sendiri.
+            if (! array_key_exists('setpage', $view->getData())) {
+                $view->with('setpage', \App\Models\PageSettings::first());
+            }
+        });
 
         // ── Blade directive paket langganan (Fase 3) ───────────────────
         // @fitur('telegram') ... @endfitur
