@@ -21,6 +21,9 @@
 	<link href="{{asset('frontend/css/forum/style.css')}}" rel="stylesheet" />
 	<link href="{{asset('frontend/css/forum/style-responsive.min.css')}}" rel="stylesheet" />
 	<link href="{{asset('frontend/css/forum/theme/default.css')}}" id="theme" rel="stylesheet" />
+	{{-- Tema publik Javacom Laundry (navy #0b1326 -> gold #ffd700).
+	     Dimuat PALING AKHIR supaya menimpa style bawaan repo. --}}
+	<link href="{{asset('frontend/css/javacom-laundry.css')}}" rel="stylesheet" />
 	<!-- ================== END BASE CSS STYLE ================== -->
 
 	<!-- ================== BEGIN BASE JS ================== -->
@@ -98,7 +101,9 @@
     </div>
     <!-- end #footer-copyright -->
 	<!-- ================== BEGIN BASE JS ================== -->
-  <script src="{{ asset('js/app.js') }}" ></script>
+  {{-- Cache-busting: token berubah tiap file di-rebuild, jadi Cloudflare
+       (max-age 4 jam) langsung ambil versi baru tanpa perlu purge manual. --}}
+  <script src="{{ asset('js/app.js') }}?v={{ @filemtime(public_path('js/app.js')) ?: '1' }}" ></script>
 	<script src="{{asset('frontend/plugins/jquery/jquery-3.2.1.min.js')}}"></script>
 	<script src="{{asset('frontend/plugins/bootstrap3/js/bootstrap.min.js')}}"></script>
 	<script src="{{asset('frontend/plugins/js-cookie/js.cookie.js')}}"></script>
