@@ -1,10 +1,18 @@
 {{--
   Hero — Javacom Laundry (Modern SaaS)
-  Diganti 9-Okt-2026: foto stock lama diganti panel CSS gradient navy→gold
-  supaya tidak menyerupai repo asli + konsisten brand (navy #0b1326 / gold #ffd700).
+  v2 (9-Okt-2026): foto banner dikembalikan, tapi dibungkus overlay navy pekat +
+  blur/grayscale supaya (a) teks putih tetap terbaca kontras tinggi, (b) tetap
+  terasa modern dan bukan sekadar "tempel foto stock repo asli".
+  Semua ornamen (orb, grid, panel) tetap CSS/SVG inline — tanpa aset pihak ketiga.
 --}}
 <div class="hero-jc">
     <div class="hero-jc__bg" aria-hidden="true">
+        {{-- Foto latar (dikembalikan sesuai permintaan Boz) --}}
+        <img class="hero-jc__photo"
+             src="{{ asset('frontend/img/banner.jpg') }}"
+             alt="" loading="eager" fetchpriority="high" />
+        {{-- Lapisan overlay navy agar teks tetap tajam --}}
+        <span class="hero-jc__scrim"></span>
         <span class="hero-jc__orb hero-jc__orb--1"></span>
         <span class="hero-jc__orb hero-jc__orb--2"></span>
         <span class="hero-jc__orb hero-jc__orb--3"></span>

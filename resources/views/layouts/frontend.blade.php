@@ -23,7 +23,7 @@
 	<link href="{{asset('frontend/css/forum/theme/default.css')}}" id="theme" rel="stylesheet" />
 	{{-- Tema publik Javacom Laundry (navy #0b1326 -> gold #ffd700).
 	     Dimuat PALING AKHIR supaya menimpa style bawaan repo. --}}
-	<link href="{{asset('frontend/css/javacom-laundry.css')}}" rel="stylesheet" />
+	<link href="{{ asset('frontend/css/javacom-laundry.css') }}?v={{ @filemtime(public_path('frontend/css/javacom-laundry.css')) }}" rel="stylesheet" />
 	<!-- ================== END BASE CSS STYLE ================== -->
 
 	<!-- ================== BEGIN BASE JS ================== -->
