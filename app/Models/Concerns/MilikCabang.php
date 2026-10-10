@@ -77,6 +77,13 @@ trait MilikCabang
      */
     protected static function cabangIdsUntukScope($user): array
     {
+        // KARYAWAN (kasir/operator) -> TERKUNCI ke cabang_id miliknya sendiri.
+        // Karyawan tidak punya mode "semua cabang" walau merchant multi-cabang.
+        // Diletakkan SEBELUM blok merchant supaya tidak tertimpa.
+        if ($user->hasRole('Karyawan') && $user->cabang_id !== null) {
+            return [(int) $user->cabang_id];
+        }
+
         // Owner/user ber-merchant -> seluruh cabang merchant-nya,
         // dipersempit kalau ada "cabang aktif" di session.
         if ($user->merchant_id !== null) {

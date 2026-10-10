@@ -80,14 +80,22 @@ class User extends Authenticatable
             return Cabang::pluck('id')->all();
         }
 
-        // 2. User ber-merchant -> HANYA cabang milik merchant-nya.
+        // 2. KARYAWAN (kasir/operator) -> TERKUNCI ke cabang_id miliknya.
+        //    Karyawan TIDAK boleh melihat lintas cabang, walaupun merchant
+        //    induknya punya banyak cabang. Ini isolasi tingkat-cabang.
+        //    (Dipisah dari blok merchant di bawah, yang khusus owner.)
+        if ($this->hasRole('Karyawan') && $this->cabang_id !== null) {
+            return [(int) $this->cabang_id];
+        }
+
+        // 3. Owner/Admin ber-merchant -> SELURUH cabang milik merchant-nya.
         //    Ini yang mencegah owner merchant A melihat cabang merchant B.
         if ($this->merchant_id !== null) {
             return Cabang::where('merchant_id', $this->merchant_id)
                 ->pluck('id')->map('intval')->all();
         }
 
-        // 3. User tanpa merchant (data lama) -> cabang dari pivot + cabang utama
+        // 4. User tanpa merchant (data lama) -> cabang dari pivot + cabang utama
         $ids = $this->cabangs()->pluck('cabang.id')->map('intval')->all();
 
         if ($this->cabang_id !== null && ! in_array((int) $this->cabang_id, $ids, true)) {
