@@ -31,7 +31,12 @@ class AddOrderRequest extends FormRequest
           'jenis_pembayaran'  => 'required',
           'disc'              => 'nullable|numeric',
           'harga_id'          => 'required',
-          'customer_id'       => 'required'
+          'customer_id'       => 'required',
+          // F1: antar-jemput (opsional — transaksi lama tidak mengirim ini)
+          'ongkir'            => 'nullable|numeric|min:0',
+          'jarak_km'          => 'nullable|numeric|min:0',
+          'mode_layanan'      => 'nullable|in:reguler,pickup,dropoff',
+          'alamat_jemput'     => 'nullable|string|max:500'
         ];
     }
 
@@ -46,7 +51,11 @@ class AddOrderRequest extends FormRequest
         'jenis_pembayaran.required' => 'Jenis Pembayaran wajib dipilih.',
         'disc.numeric'              => 'Diskon hanya mendukung angka.',
         'harga_id.required'         => 'Jenis Pakaian wajib dipilih.',
-        'customer_id.required'      => 'Customer wajib dipilih.'
+        'customer_id.required'      => 'Customer wajib dipilih.',
+        'ongkir.numeric'            => 'Ongkir harus berupa angka.',
+        'ongkir.min'                => 'Ongkir tidak boleh negatif.',
+        'jarak_km.numeric'          => 'Jarak harus berupa angka.',
+        'mode_layanan.in'           => 'Mode layanan tidak dikenal.'
       ];
     }
 }

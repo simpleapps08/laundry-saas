@@ -79,6 +79,9 @@
                     @else
                         ({{$item->disc}} %)
                     @endif :  </p>
+                    @if (($item->ongkir_numeric ?? 0) > 0)
+                    <p>Ongkir Antar-Jemput @if($item->jarak_km) ({{rtrim(rtrim(number_format((float)$item->jarak_km,2,'.',''),'0'),'.')}} km) @endif : {{Rupiah::getRupiah($item->ongkir_numeric)}}</p>
+                    @endif
                     <hr>
                     <h3><b>Total Bayar :</b> {{Rupiah::getRupiah($item->harga_akhir)}}</h3>
                 </div>

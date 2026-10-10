@@ -122,13 +122,49 @@
                 </div>
                 <div class="col-md-2">
                   <div class="form-group has-success">
-                      <label class="control-label">Disc</label>
+                      <label class="control-label">Disc (%)</label>
                       <input type="number" name="disc" placeholder="Tulis Disc" class="form-control @error('disc') is-invalid @enderror">
                       @error('disc')
                         <span class="invalid-feedback text-danger" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
                       @enderror
+                  </div>
+                </div>
+              </div>
+
+              {{-- F1: ANTAR-JEMPUT (opsional). Ongkir ditambahkan ke total tagihan. --}}
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group has-success">
+                      <label class="control-label">Mode Layanan</label>
+                      <select name="mode_layanan" class="form-control custom-select">
+                        <option value="reguler" {{old('mode_layanan') == 'reguler' ? 'selected' : ''}}>Reguler (datang ke toko)</option>
+                        <option value="pickup" {{old('mode_layanan') == 'pickup' ? 'selected' : ''}}>Dijemput (pickup)</option>
+                        <option value="dropoff" {{old('mode_layanan') == 'dropoff' ? 'selected' : ''}}>Diantar (dropoff)</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-success">
+                      <label class="control-label">Jarak (km)</label>
+                      <input type="number" step="0.1" min="0" name="jarak_km" value="{{old('jarak_km')}}" placeholder="cth: 5" class="form-control">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-success">
+                      <label class="control-label">Ongkir (Rp)</label>
+                      <input type="number" min="0" name="ongkir" id="ongkir" value="{{old('ongkir')}}" placeholder="0" class="form-control @error('ongkir') is-invalid @enderror">
+                      @error('ongkir')
+                        <span class="invalid-feedback text-danger" role="alert"><strong>{{ $message }}</strong></span>
+                      @enderror
+                      <small class="text-muted">Kosongkan bila tanpa antar-jemput.</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-success">
+                      <label class="control-label">Alamat Jemput/Antar</label>
+                      <input type="text" name="alamat_jemput" value="{{old('alamat_jemput')}}" placeholder="Alamat penjemputan" class="form-control">
                   </div>
                 </div>
               </div>

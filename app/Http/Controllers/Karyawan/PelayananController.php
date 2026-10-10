@@ -101,6 +101,22 @@ class PelayananController extends Controller
           $order->harga_akhir_numeric = $hitung;
         }
 
+        // F1: ONGKIR antar-jemput (diisi kasir manual saat timbang).
+        // Ongkir DITAMBAHKAN setelah diskon -> masuk ke harga_akhir (total tagihan).
+        // Ongkir 0 / kosong = perilaku lama tidak berubah.
+        $ongkir = ($request->ongkir !== null && $request->ongkir !== '') ? (float) $request->ongkir : 0.0;
+        $order->ongkir_numeric  = $ongkir;
+        $order->jarak_km        = ($request->jarak_km !== null && $request->jarak_km !== '') ? (float) $request->jarak_km : null;
+        $order->mode_layanan    = $request->mode_layanan ?: 'reguler';
+        $order->alamat_jemput   = $request->alamat_jemput;
+        $order->sumber_order    = $request->sumber_order ?: 'kasir';
+
+        if ($ongkir > 0) {
+            $totalAkhir = ((float) $order->harga_akhir_numeric) + $ongkir;
+            $order->harga_akhir         = $totalAkhir;
+            $order->harga_akhir_numeric = $totalAkhir;
+        }
+
         $order->jenis_pembayaran  = $request->jenis_pembayaran;
 
         // Kolom string lama (masih dibaca view existing)
