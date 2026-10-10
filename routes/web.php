@@ -16,6 +16,19 @@ Route::middleware(['auth'])->group(function () {
 // Frontend
 Route::get('pencarian-laundry','FrontController@search');
 
+// ── F2: ORDER ONLINE (self-service, TANPA akun) ──────────────────────
+// PUBLIK & rate-limited: form pembuat pesanan nyata -> cegah spam.
+Route::middleware('throttle:20,60')->group(function () {
+    Route::get('pesan', [\App\Http\Controllers\OrderOnlineController::class, 'form'])
+        ->name('order-online.form');
+    Route::post('pesan', [\App\Http\Controllers\OrderOnlineController::class, 'kirim'])
+        ->name('order-online.kirim');
+    Route::get('pesan/sukses/{kode}', [\App\Http\Controllers\OrderOnlineController::class, 'sukses'])
+        ->name('order-online.sukses');
+    Route::get('cek-pesanan', [\App\Http\Controllers\OrderOnlineController::class, 'cek'])
+        ->name('order-online.cek');
+});
+
 // ── PENDAFTARAN MANDIRI (self-service signup) ───────────────────────
 // PUBLIK. Rate-limited 5 percobaan/jam per IP supaya tidak di-spam
 // (pendaftaran = pembuatan akun + merchant nyata).
@@ -113,6 +126,14 @@ Route::middleware('auth')->group(function () {
     // PelayananController hanya menyediakan index/store/show/create.
     // edit/update/destroy tidak diimplementasi -> dibatasi agar 404, bukan 500.
     Route::resource('pelayanan','Karyawan\PelayananController')->only(['index','create','store','show']);
+
+    // ── F2: Order Online Masuk (sisi kasir) ──────────────────────────
+    Route::get('order-online-masuk', [\App\Http\Controllers\Karyawan\PesananOnlineController::class, 'index'])
+        ->name('order-online.masuk');
+    Route::post('order-online-masuk/tandai', [\App\Http\Controllers\Karyawan\PesananOnlineController::class, 'tandaiDiproses'])
+        ->name('order-online.tandai');
+    Route::post('order-online-masuk/{id}/batal', [\App\Http\Controllers\Karyawan\PesananOnlineController::class, 'batalkan'])
+        ->name('order-online.batal');
     // Transaksi
     Route::get('add-order','Karyawan\PelayananController@addorders');
     Route::get('update-status-laundry','Karyawan\PelayananController@updateStatusLaundry');
