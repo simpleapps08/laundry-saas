@@ -61,7 +61,7 @@
 
                 <label>Nomor Rekening/Telp: </label>
                 <div class="form-group">
-                    <input type="number" name="no_rekening" placeholder="Nomor Rekening" class="form-control @error('no_rekening') is-invalid @enderror">
+                    <input type="text" inputmode="numeric" name="no_rekening" placeholder="Nomor Rekening/HP" class="form-control @error('no_rekening') is-invalid @enderror">
                     @error('no_rekening')
                       <span class="invalid-feedback" role="alert">
                           <strong>{{ $message }}</strong>

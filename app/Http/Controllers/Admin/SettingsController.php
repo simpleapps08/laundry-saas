@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\{PageSettings,User,LaundrySetting,DataBank,notifications_setting};
 use Auth;
 use Session;
@@ -93,16 +94,18 @@ class SettingsController extends Controller
   public function bank(Request $request)
   {
 
-    $cek = DataBank::get()->count();
+    // FIX: batas 3 bank dihitung PER-USER (dulu global -> user lain ikut kehitung).
+    $cek = DataBank::where('user_id', Auth::id())->count();
     if ($cek >= 3) {
       Session::flash('error','Maksimal bank hanya 3 !');
       return back();
     }
 
+    // FIX: unique per-user (dulu global -> satu "BCA" memblokir semua user lain).
     $request->validate([
-      'nama_bank'   => 'required|unique:data_banks',
-      'no_rekening' => 'required|unique:data_banks',
-      'no_rekening' => 'required',
+      'nama_bank'   => ['required', Rule::unique('data_banks', 'nama_bank')->where(fn ($q) => $q->where('user_id', Auth::id()))],
+      'no_rekening' => ['required', Rule::unique('data_banks', 'no_rekening')->where(fn ($q) => $q->where('user_id', Auth::id()))],
+      'nama_pemilik' => 'required',
     ]);
 
     DataBank::create([
