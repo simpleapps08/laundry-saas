@@ -13,7 +13,9 @@
   </div>
   <div class="card-content">
     <div class="card-body">
-      <div class="table-responsive">
+
+      {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+      <div class="table-responsive d-none d-md-block">
         <table class="table table-hover mb-0">
           <thead>
             <tr>
@@ -26,7 +28,6 @@
             @forelse ($cabang as $c)
               @php
                 $s = $stat[$c->id] ?? null;
-                // pilih langganan yang masih berlaku dari koleksi ter-eager-load
                 $l = $c->langganan
                     ->filter(fn ($x) => in_array($x->status, ['trial', 'aktif']))
                     ->first();
@@ -72,6 +73,51 @@
           </tbody>
         </table>
       </div>
+
+      {{-- ===== MOBILE (<768px): KARTU ===== --}}
+      <div class="jv-cards-mobile">
+        @forelse ($cabang as $c)
+          @php
+            $s = $stat[$c->id] ?? null;
+            $l = $c->langganan
+                ->filter(fn ($x) => in_array($x->status, ['trial', 'aktif']))
+                ->first();
+          @endphp
+          <div class="jv-mcard">
+            <div class="jv-mcard-title">
+              <span>{{ $c->nama }}</span>
+              <span class="badge badge-{{ $c->status === 'aktif' ? 'success' : 'secondary' }}">{{ $c->status }}</span>
+            </div>
+            <div class="jv-mcard-row"><span class="jv-mcard-label">Kode</span><span class="jv-mcard-value"><code>{{ $c->kode }}</code></span></div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Paket</span>
+              <span class="jv-mcard-value">
+                @if ($l?->paket)<span class="badge badge-primary">{{ $l->paket->nama }}</span>@else<span class="badge badge-secondary">tanpa paket</span>@endif
+              </span>
+            </div>
+            <div class="jv-mcard-row"><span class="jv-mcard-label">User</span><span class="jv-mcard-value">{{ $c->jumlah_user }}</span></div>
+            <div class="jv-mcard-row"><span class="jv-mcard-label">Transaksi</span><span class="jv-mcard-value">{{ $s->jml ?? 0 }}</span></div>
+            <div class="jv-mcard-row"><span class="jv-mcard-label">Pendapatan</span><span class="jv-mcard-value">{{ $rp($s->total ?? 0) }}</span></div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Berakhir</span>
+              <span class="jv-mcard-value">
+                @if ($l?->berakhir)
+                  {{ $l->berakhir->format('d/m/Y') }}
+                  @php $sisa = $l->sisaHari(); @endphp
+                  @if ($sisa >= 0 && $sisa <= 30)<br><small class="text-warning">{{ $sisa }} hari lagi</small>
+                  @elseif ($sisa < 0)<br><small class="text-danger">lewat {{ abs($sisa) }} hari</small>@endif
+                @else - @endif
+              </span>
+            </div>
+            @if ($c->alamat)
+              <div class="jv-mcard-row"><span class="jv-mcard-label">Alamat</span><span class="jv-mcard-value">{{ $c->alamat }}</span></div>
+            @endif
+          </div>
+        @empty
+          <div class="jv-mcard-empty">Belum ada cabang</div>
+        @endforelse
+      </div>
+
     </div>
   </div>
 </div>

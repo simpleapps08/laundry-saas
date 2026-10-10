@@ -129,7 +129,9 @@
       </div>
       <div class="card-content">
         <div class="card-body">
-          <div class="table-responsive">
+
+          {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+          <div class="table-responsive d-none d-md-block">
             <table class="table table-hover mb-0">
               <thead>
                 <tr>
@@ -155,6 +157,30 @@
               </tbody>
             </table>
           </div>
+
+          {{-- ===== MOBILE (<768px): KARTU ===== --}}
+          <div class="jv-cards-mobile">
+            @forelse ($tagihanTertunggak as $t)
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $t->nomor }}</span>
+                  <span class="badge badge-secondary">{{ $t->status }}</span>
+                </div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Cabang</span><span class="jv-mcard-value">{{ $t->cabang?->nama ?? '-' }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Jumlah</span><span class="jv-mcard-value" style="font-weight:700">{{ $rp($t->jumlah) }}</span></div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Jatuh Tempo</span>
+                  <span class="jv-mcard-value {{ $t->terlambat() ? 'text-danger' : '' }}">
+                    {{ $t->jatuh_tempo?->format('d/m/Y') }}
+                    @if ($t->terlambat()) <span class="badge badge-danger">terlambat</span> @endif
+                  </span>
+                </div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Tidak ada tagihan tertunggak</div>
+            @endforelse
+          </div>
+
         </div>
       </div>
     </div>

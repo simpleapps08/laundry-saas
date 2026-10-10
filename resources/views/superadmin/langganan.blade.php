@@ -66,7 +66,9 @@
       <div class="card-header"><h4 class="card-title">Daftar Langganan ({{ $langganan->count() }})</h4></div>
       <div class="card-content">
         <div class="card-body">
-          <div class="table-responsive">
+
+          {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+          <div class="table-responsive d-none d-md-block">
             <table class="table table-hover mb-0">
               <thead>
                 <tr><th>Cabang</th><th>Paket</th><th>Siklus</th><th>Periode</th><th>Sisa</th><th>Status</th></tr>
@@ -102,6 +104,39 @@
               </tbody>
             </table>
           </div>
+
+          {{-- ===== MOBILE (<768px): KARTU ===== --}}
+          <div class="jv-cards-mobile">
+            @forelse ($langganan as $l)
+              @php
+                $warna = match($l->status) {
+                  'aktif' => 'success', 'trial' => 'info',
+                  'jatuh_tempo' => 'danger', default => 'secondary',
+                };
+                $h = $l->sisaHari();
+              @endphp
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $l->cabang?->nama ?? '-' }}</span>
+                  <span class="badge badge-{{ $warna }}">{{ $l->status }}</span>
+                </div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Paket</span><span class="jv-mcard-value">{{ $l->paket?->nama ?? '-' }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Siklus</span><span class="jv-mcard-value">{{ $l->siklus }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Periode</span><span class="jv-mcard-value">{{ $l->mulai?->format('d/m/Y') }} — {{ $l->berakhir?->format('d/m/Y') }}</span></div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Sisa</span>
+                  <span class="jv-mcard-value">
+                    @if ($h < 0) <span class="text-danger">lewat</span>
+                    @elseif ($h <= 30) <span class="text-warning">{{ $h }} hari</span>
+                    @else {{ $h }} hari @endif
+                  </span>
+                </div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada langganan</div>
+            @endforelse
+          </div>
+
         </div>
       </div>
     </div>
