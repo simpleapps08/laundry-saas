@@ -43,12 +43,18 @@
                         <td>{{carbon\carbon::parse($item->tgl_transaksi)->format('d-m-y')}}</td>
                         <td>{{$item->customer}}</td>
                         <td>
-                            @if ($item->status_order == 'Done')
+                            @if ($item->status_order == 'Dijemput')
+                                <span class="label label-warning">Dijemput</span>
+                            @elseif ($item->status_order == 'Done')
                                 <span class="label label-success">Selesai</span>
+                            @elseif($item->status_order == 'Diantar')
+                                <span class="label label-primary">Diantar</span>
                             @elseif($item->status_order == 'Delivery')
                                 <span class="label label-primary">Diambil</span>
                             @elseif($item->status_order == 'Process')
                                 <span class="label label-info">Diproses</span>
+                            @elseif($item->status_order == 'Batal')
+                                <span class="label label-danger">Batal</span>
                             @endif
                         </td>
                         <td>
@@ -67,13 +73,23 @@
                             <a class="btn btn-sm btn-danger" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Bayar</a>
                             <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
                             @elseif($item->status_payment == 'Success')
-                              @if ($item->status_order == 'Process')
+                              @if ($item->status_order == 'Dijemput')
+                                <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Proses Cuci</a>
+                                <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
+                              @elseif ($item->status_order == 'Process')
                                 <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Selesai</a>
                                 <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
                               @elseif($item->status_order == 'Done')
-                                <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diambil</a>
+                                @if(in_array($item->mode_layanan, ['pickup','dropoff']))
+                                  <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diantar</a>
+                                @else
+                                  <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diambil</a>
+                                @endif
                                 <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
-                              @elseif($item->status_order == 'Delivery')
+                              @elseif($item->status_order == 'Diantar')
+                                <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diterima</a>
+                                <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
+                              @elseif(in_array($item->status_order, ['Delivery','Batal']))
                                 <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
                               @endif
                             @endif

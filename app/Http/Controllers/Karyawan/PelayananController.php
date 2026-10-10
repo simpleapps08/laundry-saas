@@ -243,6 +243,12 @@ class PelayananController extends Controller
           'status_payment' => 'Success'
         ]);
       } elseif ($transaksi->status_payment == 'Success') {
+        // F3: kalau sudah dijemput kurir, lanjut ke proses pencucian.
+        if ($transaksi->status_order == 'Dijemput') {
+          $transaksi->update([
+            'status_order' => 'Process'
+          ]);
+        }
         if ($transaksi->status_order == 'Process') {
           $transaksi->update([
             'status_order' => 'Done'
@@ -294,6 +300,15 @@ class PelayananController extends Controller
             }
 
         } elseif ($transaksi->status_order == 'Done') {
+          // F3: mode antar-jemput -> 'Diantar' (kurir antar ke pelanggan).
+          // Mode reguler -> 'Delivery' (pelanggan ambil sendiri di toko).
+          $modeAntar = in_array($transaksi->mode_layanan, ['pickup', 'dropoff'], true);
+          $transaksi->update([
+            'status_order' => $modeAntar ? 'Diantar' : 'Delivery'
+          ]);
+        } elseif ($transaksi->status_order === 'Diantar') {
+          // Sudah diantar & diterima pelanggan -> tuntas (pakai Delivery
+          // sebagai penanda akhir, konsisten dengan alur lama).
           $transaksi->update([
             'status_order' => 'Delivery'
           ]);
@@ -303,7 +318,7 @@ class PelayananController extends Controller
       if ($transaksi->status_payment == 'Success') {
           Session::flash('success', "Status Pembayaran Berhasil Diubah !");
       }
-      if($transaksi->status_order == 'Done' || $transaksi->status_order == 'Delivery') {
+      if(in_array($transaksi->status_order, ['Process','Done','Diantar','Delivery'], true)) {
           Session::flash('success', "Status Laundry Berhasil Diubah !");
       }
     }
