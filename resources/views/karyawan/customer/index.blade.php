@@ -15,8 +15,10 @@
 @endif
 <div class="card">
     <div class="card-body">
-        <div class="table-responsive m-t-5">
-                <a href="{{url('customers-create')}}" class="btn btn-primary">Tambah Customer</a>
+        <a href="{{url('customers-create')}}" class="btn btn-primary mb-1">Tambah Customer</a>
+
+        {{-- ===== DESKTOP (>=768px): TABEL + DATATABLES ===== --}}
+        <div class="table-responsive m-t-5 d-none d-md-block">
             <table id="myTable" class="table table-bordered table-striped">
                 <thead>
                     <tr align="center" style="color:black; font-weight:bold">
@@ -46,41 +48,44 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- ===== MOBILE (<768px): KARTU BERTUMPUK ===== --}}
+        <div class="jv-cards-mobile">
+            @forelse ($customer as $item)
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $item->name }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Email</span>
+                  <span class="jv-mcard-value">{{ $item->email ?: '-' }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Alamat</span>
+                  <span class="jv-mcard-value">{{ $item->alamat ?: '-' }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">No Telpon</span>
+                  <span class="jv-mcard-value">{{ $item->no_telp ?: '-' }}</span>
+                </div>
+                <div class="jv-mcard-actions">
+                  <a href="{{url('customers', $item->id)}}" class="btn btn-sm btn-primary" style="color:white">Detail</a>
+                </div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada customer.</div>
+            @endforelse
+        </div>
     </div>
 </div>
 @endsection
 @section('scripts')
 <script type="text/javascript">
-// DataTable
+// DataTable (desktop) — aman walau tabel disembunyikan di mobile
 $(document).ready(function() {
-    $('#myTable').DataTable();
-    $(document).ready(function() {
-        var table = $('#example').DataTable({
-            "columnDefs": [{
-                "visible": false,
-                "targets": 2
-            }],
-            "order": [
-                [2, 'asc']
-            ],
-            "displayLength": 25,
-            "drawCallback": function(settings) {
-                var api = this.api();
-                var rows = api.rows({
-                    page: 'current'
-                }).nodes();
-                var last = null;
-                api.column(2, {
-                    page: 'current'
-                }).data().each(function(group, i) {
-                    if (last !== group) {
-                        $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
-                        last = group;
-                    }
-                });
-            }
-        });
-    });
+    if ($.fn.DataTable && $('#myTable').length) {
+        $('#myTable').DataTable();
+    }
 });
 </script>
 @endsection

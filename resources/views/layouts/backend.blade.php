@@ -42,7 +42,7 @@
     <!-- BEGIN: Custom CSS-->
     {{-- Tema Javacom: putih · grey · tosca. Dimuat TERAKHIR supaya bisa
          menimpa CSS template tanpa mengubah file asli. --}}
-    <link rel="stylesheet" type="text/css" href="{{ asset('backend/css/javacom-theme.css') }}?v=1">
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/css/javacom-theme.css') }}?v=4">
     <!-- END: Custom CSS-->
 
 </head>

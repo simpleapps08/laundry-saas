@@ -26,7 +26,9 @@
       </div>
     </div>
     <div class="card-body">
-      <div class="table-responsive">
+
+      {{-- ===== TAMPILAN DESKTOP (>=768px): TABEL ===== --}}
+      <div class="table-responsive d-none d-md-block">
         <table class="table table-hover" id="tblOrderOnline">
           <thead>
             <tr>
@@ -82,6 +84,72 @@
           </tbody>
         </table>
       </div>
+
+      {{-- ===== TAMPILAN MOBILE (<768px): KARTU BERTUMPUK ===== --}}
+      <div class="jv-cards-mobile">
+        @forelse($pesanan as $p)
+          <div class="jv-mcard">
+            <div class="jv-mcard-title">
+              <span>{{ $p->kode_pesanan }}</span>
+              @if($p->status_online === 'Menunggu')<span class="label label-warning">Menunggu</span>
+              @elseif($p->status_online === 'Diproses')<span class="label label-success">Diproses</span>
+              @else<span class="label label-default">Dibatalkan</span>@endif
+            </div>
+
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Tanggal</span>
+              <span class="jv-mcard-value">{{ $p->created_at ? $p->created_at->format('d-m-y H:i') : '-' }}</span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Pelanggan</span>
+              <span class="jv-mcard-value">{{ $p->nama }}</span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">WA</span>
+              <span class="jv-mcard-value">{{ $p->no_telp }}</span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Alamat</span>
+              <span class="jv-mcard-value">{{ $p->alamat }}</span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Metode</span>
+              <span class="jv-mcard-value">
+                @if($p->mode_layanan === 'pickup')
+                  <span class="label label-info">Dijemput</span>
+                @else
+                  <span class="label label-warning">Antar sendiri</span>
+                @endif
+              </span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Est. Berat</span>
+              <span class="jv-mcard-value">{{ $p->estimasi_kg ? $p->estimasi_kg.' kg' : '-' }}</span>
+            </div>
+            <div class="jv-mcard-row">
+              <span class="jv-mcard-label">Cabang</span>
+              <span class="jv-mcard-value">{{ optional($p->cabang)->nama ?? '-' }}</span>
+            </div>
+
+            @if($p->status_online === 'Menunggu')
+              <div class="jv-mcard-actions">
+                <a href="{{ url('customers-create?dari_pesanan='.$p->kode_pesanan) }}" class="btn btn-sm btn-primary" style="color:white">Proses</a>
+                <form action="{{ url('order-online-masuk/'.$p->id.'/batal') }}" method="POST" style="display:inline" onsubmit="return confirm('Batalkan pesanan ini?')">
+                  @csrf
+                  <button type="submit" class="btn btn-sm btn-danger" style="color:white">Batal</button>
+                </form>
+              </div>
+            @elseif($p->transaksi_id)
+              <div class="jv-mcard-actions">
+                <a href="{{ url('invoice-kar/'.$p->transaksi_id) }}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
+              </div>
+            @endif
+          </div>
+        @empty
+          <div class="jv-mcard-empty">Belum ada order online.</div>
+        @endforelse
+      </div>
+
       <p class="text-muted small">
         Saat menekan <b>Proses</b>, Anda diarahkan ke form Tambah Order.
         Form customer akan terisi otomatis dari data pelanggan. Setelah customer

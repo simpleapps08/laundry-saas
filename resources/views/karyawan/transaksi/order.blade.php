@@ -18,7 +18,9 @@
             <a href="{{url('add-order')}}" class="btn btn-primary">Tambah</a>
         </h4>
         <h6>Info : <code> Untuk Mengubah Status Order & Pembayaran Klik Pada Bagian 'Action' Masing-masing.</code></h6>
-        <div class="table-responsive m-t-0">
+
+        {{-- ===== DESKTOP (>=768px): TABEL + DATATABLES ===== --}}
+        <div class="table-responsive m-t-0 d-none d-md-block">
             <table id="myTable" class="table display table-bordered table-striped">
                 <thead>
                     <tr>
@@ -34,7 +36,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                  {{-- {{dd($order)}} --}}
                     <?php $no=1; ?>
                     @foreach ($order as $item)
                     <tr>
@@ -100,50 +101,92 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- ===== MOBILE (<768px): KARTU BERTUMPUK ===== --}}
+        <div class="jv-cards-mobile m-t-0">
+            @forelse ($order as $item)
+              <?php
+                $st = $item->status_order;
+                $stLabel = ['Dijemput'=>'Dijemput','Done'=>'Selesai','Diantar'=>'Diantar','Delivery'=>'Diambil','Process'=>'Diproses','Batal'=>'Batal'][$st] ?? $st;
+                $stClass = ['Dijemput'=>'label-warning','Done'=>'label-success','Diantar'=>'label-primary','Delivery'=>'label-primary','Process'=>'label-info','Batal'=>'label-danger'][$st] ?? 'label-default';
+              ?>
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $item->invoice }}</span>
+                  <span class="label {{ $stClass }}">{{ $stLabel }}</span>
+                </div>
+
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Tanggal</span>
+                  <span class="jv-mcard-value">{{ carbon\carbon::parse($item->tgl_transaksi)->format('d-m-y') }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Customer</span>
+                  <span class="jv-mcard-value">{{ $item->customer }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Jenis</span>
+                  <span class="jv-mcard-value">{{ optional($item->price)->jenis ?? '-' }}</span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Payment</span>
+                  <span class="jv-mcard-value">
+                    @if ($item->status_payment == 'Success')<span class="label label-success">Lunas</span>
+                    @elseif($item->status_payment == 'Pending')<span class="label label-info">Pending</span>
+                    @else {{ $item->status_payment }} @endif
+                  </span>
+                </div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Total</span>
+                  <span class="jv-mcard-value" style="font-weight:700">{{ Rupiah::getRupiah($item->harga_akhir) }}</span>
+                </div>
+
+                <div class="jv-mcard-actions">
+                  @if ($item->status_payment == 'Pending')
+                    <a class="btn btn-sm btn-danger" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Bayar</a>
+                    <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
+                  @elseif($item->status_payment == 'Success')
+                    @if ($item->status_order == 'Dijemput')
+                      <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Proses Cuci</a>
+                    @elseif ($item->status_order == 'Process')
+                      <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Selesai</a>
+                    @elseif($item->status_order == 'Done')
+                      @if(in_array($item->mode_layanan, ['pickup','dropoff']))
+                        <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diantar</a>
+                      @else
+                        <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diambil</a>
+                      @endif
+                    @elseif($item->status_order == 'Diantar')
+                      <a class="btn btn-sm btn-info" style="color:white" data-id-update="{{$item->id}}" id="updateStatus">Diterima</a>
+                    @endif
+                    <a href="{{url('invoice-kar', $item->id)}}" class="btn btn-sm btn-warning" style="color:white">Invoice</a>
+                  @endif
+                </div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada transaksi.</div>
+            @endforelse
+        </div>
     </div>
 </div>
 @endsection
 @section('scripts')
 <script type="text/javascript">
 
-// Update Status Laundry
-$(document).on('click', '#updateStatus', function () {
+// Update Status Laundry (delegated -> berlaku untuk tabel & kartu)
+$(document).on('click', '[id=updateStatus]', function () {
   var id = $(this).attr('data-id-update');
   $.get('update-status-laundry', {'_token' : $('meta[name=csrf-token]').attr('content'),id:id}, function(_resp){
     location.reload()
   });
 });
 
-// DATATABLE
+// DATATABLE — hanya aktif bila tabel terlihat (desktop).
+// Di mobile tabel disembunyikan; DataTables tetap aman di-init.
 $(document).ready(function() {
-    $('#myTable').DataTable();
-    $(document).ready(function() {
-        var table = $('#example').DataTable({
-            "columnDefs": [{
-                "visible": false,
-                "targets": 2
-            }],
-            "order": [
-                [2, 'asc']
-            ],
-            "displayLength": 25,
-            "drawCallback": function(settings) {
-                var api = this.api();
-                var rows = api.rows({
-                    page: 'current'
-                }).nodes();
-                var last = null;
-                api.column(2, {
-                    page: 'current'
-                }).data().each(function(group, i) {
-                    if (last !== group) {
-                        $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
-                        last = group;
-                    }
-                });
-            }
-        });
-    });
+    if ($.fn.DataTable && $('#myTable').length) {
+        $('#myTable').DataTable();
+    }
 });
 </script>
 @endsection

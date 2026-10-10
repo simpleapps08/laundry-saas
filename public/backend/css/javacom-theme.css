@@ -453,8 +453,13 @@ table.dataTable thead .sorting:after { opacity: .25; }
   .table tbody td, .table thead th { font-size: .8rem; padding: .5rem .4rem; }
   .btn-sm { font-size: .74rem; padding: .22rem .5rem; }
   .content-wrapper { padding-left: .75rem; padding-right: .75rem; }
-  /* Tabel lebar -> gulir horizontal, jangan pecah layout */
+  /* Tabel lebar -> gulir horizontal, jangan pecah layout.
+     Penting: tabel harus DIBIARKAN melebar (width:auto) supaya overflow-x
+     benar-benar aktif. Tanpa ini tabel dipaksa width:100% -> kolom dijepit
+     sampai terpotong & hilang (bug tabel mobile). min-width:100% menjaga
+     tabel sempit tetap mengisi penuh. */
   .table-responsive { -webkit-overflow-scrolling: touch; }
+  .table-responsive > .table { width: auto; min-width: 100%; }
 }
 
 /* ============================ CETAK ============================ */
@@ -585,3 +590,90 @@ table.dataTable thead .sorting:after { opacity: .25; }
   .jv-auth-row { flex-direction: column; align-items: stretch; gap: 8px; }
   .jv-auth-row .jv-auth-link { text-align: center; }
 }
+
+/* ============================ KARTU MOBILE ============================
+   Pola: daftar data yang di desktop berbentuk tabel, di layar <768px
+   ditampilkan sebagai KARTU BERTUMPUK (tanpa gulir horizontal).
+   - .table.jv-hide-mobile  -> tabel disembunyikan di mobile
+   - .jv-cards-mobile       -> kartu hanya tampil di mobile
+   Markup kartu dibuat di masing-masing view (label + nilai + tombol aksi).
+   ===================================================================== */
+
+.jv-cards-mobile { display: none; }
+
+@media (max-width: 767.98px) {
+  .table.jv-hide-mobile { display: none; }
+
+  .jv-cards-mobile {
+    display: block;
+  }
+
+  .jv-mcard {
+    border: 1px solid var(--jv-border);
+    border-radius: var(--jv-radius);
+    background: var(--jv-white);
+    padding: .75rem .85rem;
+    margin-bottom: .75rem;
+    box-shadow: var(--jv-shadow);
+  }
+
+  /* Judul kartu (mis. kode pesanan) */
+  .jv-mcard-title {
+    font-weight: 700;
+    color: var(--jv-grey-900);
+    font-size: .95rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-bottom: .55rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px dashed var(--jv-border);
+  }
+
+  /* Baris label : nilai */
+  .jv-mcard-row {
+    display: flex;
+    justify-content: space-between;
+    gap: .75rem;
+    font-size: .84rem;
+    padding: .22rem 0;
+    line-height: 1.45;
+  }
+  .jv-mcard-row .jv-mcard-label {
+    color: var(--jv-grey-500);
+    flex: 0 0 auto;
+  }
+  .jv-mcard-row .jv-mcard-value {
+    color: var(--jv-grey-800);
+    text-align: right;
+    flex: 1 1 auto;
+    word-break: break-word;
+  }
+
+  /* Blok aksi di bawah kartu */
+  .jv-mcard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-top: .6rem;
+    padding-top: .6rem;
+    border-top: 1px solid var(--jv-border);
+  }
+  /* Tombol aksi: bagi rata tapi beri tinggi nyaman untuk jari (min 40px) */
+  .jv-mcard-actions .btn {
+    flex: 1 1 0;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .jv-mcard-empty {
+    text-align: center;
+    color: var(--jv-grey-500);
+    padding: 1.25rem .5rem;
+    font-size: .9rem;
+  }
+}
+
