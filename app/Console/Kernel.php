@@ -24,8 +24,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // Tagih langganan bulanan otomatis — tanggal 1 pukul 07:00.
+        // Idempoten: melewati langganan yang masih punya tagihan belum lunas.
+        $schedule->command('langganan:tagih')
+            ->monthlyOn(1, '07:00')
+            ->timezone('Asia/Jakarta')
+            ->onOneServer()
+            ->withoutOverlapping(60);
     }
 
     /**
