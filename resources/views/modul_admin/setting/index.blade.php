@@ -256,8 +256,13 @@
                       @else
                         @foreach ($databank as $bank)
                           <div class="col-md-4">
-                            <a data-toggle="modal" data-target="#editpayment">
-                              <div class="card bg-danger">
+                            <a data-toggle="modal" data-target="#editpayment"
+                               class="jv-bank-card"
+                               data-id="{{ $bank->id }}"
+                               data-bank="{{ $bank->nama_bank }}"
+                               data-rekening="{{ $bank->no_rekening }}"
+                               data-pemilik="{{ $bank->nama_pemilik }}">
+                              <div class="card bg-primary">
                                 <div class="card-body text-center">
                                   <div class="card-title text-white">
                                     {{$bank->nama_bank}}
@@ -382,5 +387,29 @@
       $('#addpayment').modal('show');
     });
   @endif
+
+  // Isi modal Edit Bank saat kartu rekening diklik
+  $(document).on('click', '.jv-bank-card', function () {
+    var id       = $(this).data('id');
+    var bank     = $(this).data('bank');
+    var rekening = $(this).data('rekening');
+    var pemilik  = $(this).data('pemilik');
+
+    $('#edit_bank_id').val(id);
+    $('#edit_nama_bank').val(bank);
+    $('#edit_no_rekening').val(rekening);
+    $('#edit_nama_pemilik').val(pemilik);
+
+    // arahkan form edit & hapus ke baris yang tepat
+    $('#form_edit_bank').attr('action', "{{ url('edit-bank') }}/" + id);
+    $('#form_hapus_bank').attr('action', "{{ url('hapus-bank') }}/" + id);
+  });
+
+  // Tombol Hapus -> konfirmasi lalu submit form hapus
+  $(document).on('click', '#btn_hapus_bank', function () {
+    if (confirm('Yakin ingin menghapus rekening ini? Tindakan tidak bisa dibatalkan.')) {
+      $('#form_hapus_bank').trigger('submit');
+    }
+  });
 </script>
 @endsection

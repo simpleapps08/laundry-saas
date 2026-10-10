@@ -677,3 +677,17 @@ table.dataTable thead .sorting:after { opacity: .25; }
   }
 }
 
+
+/* Footer modal edit bank: di mobile tombol full-width bertumpuk */
+@media (max-width: 575.98px) {
+  .jv-bank-modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: .5rem;
+  }
+  .jv-bank-modal-footer .btn {
+    width: 100%;
+    margin: 0;
+    min-height: 44px;
+  }
+}

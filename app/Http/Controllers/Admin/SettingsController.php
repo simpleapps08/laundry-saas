@@ -119,6 +119,39 @@ class SettingsController extends Controller
     return back();
   }
 
+  // Edit Bank
+  public function editBank(Request $request, $id)
+  {
+    // FIX: hanya boleh mengubah rekening MILIK SENDIRI (isolasi per-user).
+    $bank = DataBank::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+    // FIX: unique per-user, abaikan baris ini sendiri saat cek.
+    $request->validate([
+      'nama_bank'    => ['required', Rule::unique('data_banks', 'nama_bank')->where(fn ($q) => $q->where('user_id', Auth::id()))->ignore($bank->id)],
+      'no_rekening'  => ['required', Rule::unique('data_banks', 'no_rekening')->where(fn ($q) => $q->where('user_id', Auth::id()))->ignore($bank->id)],
+      'nama_pemilik' => 'required',
+    ]);
+
+    $bank->nama_bank    = $request->nama_bank;
+    $bank->no_rekening  = $request->no_rekening;
+    $bank->nama_pemilik = $request->nama_pemilik;
+    $bank->save();
+
+    Session::flash('success','Bank Berhasil Diupdate !');
+    return back();
+  }
+
+  // Hapus Bank
+  public function hapusBank($id)
+  {
+    // FIX: hanya boleh menghapus rekening MILIK SENDIRI (isolasi per-user).
+    $bank = DataBank::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+    $bank->delete();
+
+    Session::flash('success','Bank Berhasil Dihapus !');
+    return back();
+  }
+
   // Notification
   public function notif(Request $request,$id)
   {

@@ -81,7 +81,9 @@ Route::middleware('auth')->group(function () {
     Route::put('proses-setting-page/{id}','Admin\SettingsController@proses_set_page')->name('seting-page.update');
     Route::put('set-theme/{id}','Admin\SettingsController@set_theme')->name('setting-theme.update');
     Route::put('set-target-laundry/{id}','Admin\SettingsController@set_target_laundry')->name('set-target.update');
-    Route::post('add-bank','Admin\SettingsController@bank')->name('setting.bank');
+    Route::post('add-bank','Admin\\SettingsController@bank')->name('setting.bank');
+    Route::post('edit-bank/{id}','Admin\\SettingsController@editBank')->name('setting.bank.edit');
+    Route::delete('hapus-bank/{id}','Admin\\SettingsController@hapusBank')->name('setting.bank.hapus');
     Route::put('set-notif/{id}','Admin\SettingsController@notif')->name('set-notif.update');
 
     // Profile

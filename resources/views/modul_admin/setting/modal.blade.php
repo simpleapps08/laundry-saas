@@ -87,3 +87,63 @@
       </div>
   </div>
 </div>
+
+{{-- Modal Edit / Hapus Data Bank --}}
+<div class="modal fade text-left" id="editpayment" tabindex="-1" role="dialog" aria-labelledby="editpayment" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title" id="editpayment">Edit Data Payment</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form action="" method="POST" id="form_edit_bank">
+            @csrf
+            <div class="modal-body">
+                <input type="hidden" name="bank_id" id="edit_bank_id">
+
+                <label for="Nama Bank">Nama Bank/E-Wallet</label>
+                <div class="form-group">
+                  @php $bank = App\Models\Bank::get(); @endphp
+                  <select name="nama_bank" id="edit_nama_bank" class="form-control @error('nama_bank') is-invalid @enderror">
+                    @foreach ($bank as $item)
+                      <option value="{{$item->nama_bank}}"> {{$item->nama_bank}} </option>
+                    @endforeach
+                  </select>
+                  @error('nama_bank')
+                    <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                  @enderror
+                </div>
+
+                <label>Nomor Rekening/Telp: </label>
+                <div class="form-group">
+                    <input type="text" inputmode="numeric" name="no_rekening" id="edit_no_rekening" placeholder="Nomor Rekening/HP" class="form-control @error('no_rekening') is-invalid @enderror">
+                    @error('no_rekening')
+                      <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                    @enderror
+                </div>
+
+                <label>Nama Pemilik: </label>
+                <div class="form-group">
+                    <input type="text" name="nama_pemilik" id="edit_nama_pemilik" placeholder="Nama Pemilik" class="form-control @error('nama_pemilik') is-invalid @enderror">
+                    @error('nama_pemilik')
+                      <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                    @enderror
+                </div>
+            </div>
+            <div class="modal-footer jv-bank-modal-footer">
+              <button type="button" class="btn btn-primary" id="btn_hapus_bank"><i class="feather icon-trash"></i> Hapus</button>
+              <button type="submit" class="btn btn-success">Update</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+
+          {{-- Form hapus (terpisah, agar tidak nested) --}}
+          <form action="" method="POST" id="form_hapus_bank" class="d-none">
+            @csrf
+            @method('DELETE')
+          </form>
+      </div>
+  </div>
+</div>
