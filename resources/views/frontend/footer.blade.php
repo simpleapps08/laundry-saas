@@ -20,6 +20,12 @@
                     <h4>Informasi</h4>
                     <ul class="latest-post">
                       <li>
+                        <a href="{{ route('order-online.form') }}">Pesan Laundry Online</a>
+                      </li>
+                      <li>
+                        <a href="{{ route('order-online.cek') }}">Cek Status Pesanan</a>
+                      </li>
+                      <li>
                         <a href="{{ route('signup.harga') }}">Harga &amp; Paket</a>
                       </li>
                       <li>

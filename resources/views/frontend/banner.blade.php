@@ -33,7 +33,10 @@
         </p>
 
         <div class="hero-jc__actions">
-            <a href="{{ route('signup.harga') }}" class="hero-jc__btn hero-jc__btn--primary">
+            <a href="{{ route('order-online.form') }}" class="hero-jc__btn hero-jc__btn--primary">
+                <i class="fa fa-shopping-basket"></i>&nbsp; Pesan Laundry Online
+            </a>
+            <a href="{{ route('signup.harga') }}" class="hero-jc__btn hero-jc__btn--ghost">
                 Coba Gratis 14 Hari
             </a>
             <a href="#mengapa-kami" class="hero-jc__btn hero-jc__btn--ghost">

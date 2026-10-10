@@ -35,6 +35,8 @@
       <div class="collapse navbar-collapse" id="header-navbar">
           <ul class="nav navbar-nav navbar-right">
               <li><a href="{{ url('/') }}">Home</a></li>
+              <li><a href="{{ route('order-online.form') }}">Pesan Online</a></li>
+              <li><a href="{{ route('order-online.cek') }}">Cek Pesanan</a></li>
               <li><a href="{{ route('signup.harga') }}">Harga</a></li>
               <li><a href="{{ url('/') }}#lacak">Lacak Cucian</a></li>
 
