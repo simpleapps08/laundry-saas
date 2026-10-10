@@ -248,6 +248,8 @@ class PelayananController extends Controller
           $transaksi->update([
             'status_order' => 'Process'
           ]);
+          // F4: kabari pelanggan cucian mulai diproses.
+          \App\Services\NotifikasiPelanggan::kirimStatus($transaksi, 'Process');
         }
         if ($transaksi->status_order == 'Process') {
           $transaksi->update([
@@ -288,30 +290,24 @@ class PelayananController extends Controller
               $transaksi->notify(new OrderSelesai());
             }
 
-            // Notifikasi WhatsApp
-            if (setNotificationWhatsappOrderSelesai(1) == 1 && getTokenWhatsapp() != null) {
-              $waCustomer = $transaksi->customers->no_telp; // get nomor whatsapp customer
-              $nameCustomer = $transaksi->customers->name; // get name customer
-              notificationWhatsapp(
-                getTokenWhatsapp(), // Token
-                $waCustomer, // nomor whatsapp
-                'Halo Kak '.$nameCustomer.' Laundry kamu sudah selesai dan sudah bisa diambil nih :) ' // pesan
-              );
-            }
+            // F4: notifikasi WhatsApp via service terpusat (best-effort).
+            \App\Services\NotifikasiPelanggan::kirimStatus($transaksi, 'Done');
 
         } elseif ($transaksi->status_order == 'Done') {
           // F3: mode antar-jemput -> 'Diantar' (kurir antar ke pelanggan).
           // Mode reguler -> 'Delivery' (pelanggan ambil sendiri di toko).
           $modeAntar = in_array($transaksi->mode_layanan, ['pickup', 'dropoff'], true);
-          $transaksi->update([
-            'status_order' => $modeAntar ? 'Diantar' : 'Delivery'
-          ]);
+          $statusBaru = $modeAntar ? 'Diantar' : 'Delivery';
+          $transaksi->update(['status_order' => $statusBaru]);
+          // F4: kabari pelanggan (sedang diantar / siap diambil).
+          \App\Services\NotifikasiPelanggan::kirimStatus($transaksi, $statusBaru);
         } elseif ($transaksi->status_order === 'Diantar') {
           // Sudah diantar & diterima pelanggan -> tuntas (pakai Delivery
           // sebagai penanda akhir, konsisten dengan alur lama).
           $transaksi->update([
             'status_order' => 'Delivery'
           ]);
+          \App\Services\NotifikasiPelanggan::kirimStatus($transaksi, 'Delivery');
         }
       }
 

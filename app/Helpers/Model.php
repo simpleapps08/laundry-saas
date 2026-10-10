@@ -134,23 +134,38 @@ if (! function_exists('notificationWhatsapp'))
 {
     function notificationWhatsapp($token,$waphone,$pesan)
     {
-        $apiURL = 'https://api.kirimwa.id/v1/messages';
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', $apiURL, [
-          'headers'=> [
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type'  => 'application/json'
-          ],
-          'body' => json_encode([
-            'message' => $pesan,
-            'phone_number' => $waphone,
-            'message_type' => 'text',
-            'device_id' => 'iphone' // isi dengan device_id kalian
-          ]),
-        ]);
+        // F4: notifikasi adalah BEST-EFFORT — kegagalan kirim TIDAK boleh
+        // menggagalkan proses utama (ubah status / simpan order).
+        if (empty($token) || empty($waphone)) {
+            \Log::info('WA dilewati: token/kontak kosong', ['wa' => $waphone]);
+            return false;
+        }
 
-        $statusCode = $response->getStatusCode();
-        $responseBody = json_decode($response->getBody(), true);
+        try {
+            $apiURL = 'https://api.kirimwa.id/v1/messages';
+            $device = config('services.kirimwa.device_id') ?: env('KIRIMWA_DEVICE_ID', 'iphone');
+
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', $apiURL, [
+              'headers'=> [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type'  => 'application/json'
+              ],
+              'body' => json_encode([
+                'message' => $pesan,
+                'phone_number' => $waphone,
+                'message_type' => 'text',
+                'device_id' => $device
+              ]),
+              'timeout' => 10,
+              'connect_timeout' => 5,
+            ]);
+
+            return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
+        } catch (\Throwable $e) {
+            \Log::warning('WA gagal kirim: ' . $e->getMessage(), ['wa' => $waphone]);
+            return false;
+        }
     }
 }
 
