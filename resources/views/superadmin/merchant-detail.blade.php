@@ -116,8 +116,9 @@
       </div>
       <div class="card-content">
         <div class="card-body">
+          {{-- Tabel (desktop) --}}
           <div class="table-responsive">
-            <table class="table table-bordered table-sm align-middle mb-0">
+            <table class="table table-bordered table-sm align-middle mb-0 jv-hide-mobile">
               <thead class="table-light">
                 <tr>
                   <th>Cabang</th><th>Paket</th><th>Status</th><th>Siklus</th>
@@ -153,6 +154,32 @@
               @endif
             </table>
           </div>
+
+          {{-- Kartu (mobile) --}}
+          <div class="jv-cards-mobile">
+            @forelse ($rincian['baris'] as $b)
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $b['cabang'] }}</span>
+                  <span class="badge bg-info">{{ $b['status'] }}</span>
+                </div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Paket</span><span class="jv-mcard-value">{{ $b['paket'] }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Siklus</span><span class="jv-mcard-value">{{ $b['siklus'] }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Harga</span><span class="jv-mcard-value">{{ $rp($b['harga_satuan']) }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Diskon</span><span class="jv-mcard-value text-success">@if ($b['diskon_nilai'] > 0) &minus;{{ $rp($b['diskon_nilai']) }} @else — @endif</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Total</span><span class="jv-mcard-value"><strong>{{ $rp($b['total']) }}</strong></span></div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada langganan aktif.</div>
+            @endforelse
+            @if (! empty($rincian['baris']))
+              <div class="jv-mcard" style="background:var(--jv-grey-50,#f7f8fa)">
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Subtotal</span><span class="jv-mcard-value"><strong>{{ $rp($rincian['subtotal']) }}</strong></span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Diskon</span><span class="jv-mcard-value text-success"><strong>&minus;{{ $rp($rincian['diskon_nilai']) }}</strong></span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Total</span><span class="jv-mcard-value"><strong class="text-primary">{{ $rp($rincian['total']) }}</strong></span></div>
+              </div>
+            @endif
+          </div>
         </div>
       </div>
     </div>
@@ -169,7 +196,7 @@
       <div class="card-content">
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table table-bordered table-sm align-middle mb-0">
+            <table class="table table-bordered table-sm align-middle mb-0 jv-hide-mobile">
               <thead class="table-light">
                 <tr><th>Kode</th><th>Nama</th><th>Status</th><th class="text-end">Langganan</th></tr>
               </thead>
@@ -194,6 +221,29 @@
                 @endforelse
               </tbody>
             </table>
+          </div>
+
+          {{-- Kartu cabang (mobile) --}}
+          <div class="jv-cards-mobile">
+            @forelse ($merchant->cabangs as $c)
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $c->nama }}</span>
+                  <span class="badge bg-{{ $c->status === 'aktif' ? 'success' : 'secondary' }}">{{ $c->status }}</span>
+                </div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Kode</span><span class="jv-mcard-value"><code>{{ $c->kode }}</code></span></div>
+                <div class="jv-mcard-row">
+                  <span class="jv-mcard-label">Langganan</span>
+                  <span class="jv-mcard-value">
+                    @php $la = $c->langgananAktif(); @endphp
+                    @if ($la) {{ $la->paket->nama ?? '—' }} <small class="text-muted">({{ $la->status }})</small>
+                    @else <small class="text-muted">—</small> @endif
+                  </span>
+                </div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada cabang.</div>
+            @endforelse
           </div>
 
           {{-- Form tambah cabang (cek kuota) --}}
@@ -237,7 +287,7 @@
       <div class="card-content">
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table table-bordered table-sm align-middle mb-0">
+            <table class="table table-bordered table-sm align-middle mb-0 jv-hide-mobile">
               <thead class="table-light">
                 <tr><th>Nomor</th><th class="text-end">Jumlah</th><th>Status</th></tr>
               </thead>
@@ -260,6 +310,26 @@
                 @endforelse
               </tbody>
             </table>
+          </div>
+
+          {{-- Kartu tagihan (mobile) --}}
+          <div class="jv-cards-mobile">
+            @forelse ($tagihan as $t)
+              @php
+                $sb = ['lunas' => 'success', 'belum_bayar' => 'warning',
+                       'menunggu_verifikasi' => 'info', 'batal' => 'secondary'][$t->status] ?? 'secondary';
+              @endphp
+              <div class="jv-mcard">
+                <div class="jv-mcard-title">
+                  <span>{{ $t->nomor }}</span>
+                  <span class="badge bg-{{ $sb }}">{{ str_replace('_', ' ', $t->status) }}</span>
+                </div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Cabang</span><span class="jv-mcard-value">{{ $t->cabang->nama ?? '—' }}</span></div>
+                <div class="jv-mcard-row"><span class="jv-mcard-label">Jumlah</span><span class="jv-mcard-value"><strong>{{ $rp($t->jumlah) }}</strong></span></div>
+              </div>
+            @empty
+              <div class="jv-mcard-empty">Belum ada tagihan.</div>
+            @endforelse
           </div>
         </div>
       </div>
