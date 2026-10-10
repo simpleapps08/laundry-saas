@@ -6,11 +6,10 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title"> Data Customer
-                    {{-- <a href="{{url('customer-add')}}" class="btn btn-primary">Tambah</a> --}}
-                </h4>
+                <h4 class="card-title"> Data Customer </h4>
 
-                <div class="table-responsive m-t-0">
+                {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+                <div class="table-responsive m-t-0 d-none d-md-block">
                     <table id="myTable" class="table display table-bordered table-striped">
                         <thead>
                             <tr>
@@ -46,58 +45,37 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- ===== MOBILE (<768px): KARTU ===== --}}
+                <div class="jv-cards-mobile m-t-0">
+                    @forelse ($customer as $item)
+                      <div class="jv-mcard">
+                        <div class="jv-mcard-title">
+                          <span>{{ $item->name }}</span>
+                          @if ($item->kelamin == 'L')<span class="label label-success">Laki-laki</span>
+                          @else<span class="label label-info">Perempuan</span>@endif
+                        </div>
+                        <div class="jv-mcard-row"><span class="jv-mcard-label">Alamat</span><span class="jv-mcard-value">{{ $item->alamat ?: '-' }}</span></div>
+                        <div class="jv-mcard-row"><span class="jv-mcard-label">No Telpon</span><span class="jv-mcard-value">{{ $item->no_telp ?: '-' }}</span></div>
+                        <div class="jv-mcard-actions">
+                          <a href="{{route('customer.show', $item->id)}}" class="btn btn-info btn-sm">Info</a>
+                        </div>
+                      </div>
+                    @empty
+                      <div class="jv-mcard-empty">Belum ada customer.</div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
 @section('scripts')
-
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#myTable').DataTable();
-        $(document).ready(function() {
-            var table = $('#example').DataTable({
-                "columnDefs": [{
-                    "visible": false,
-                    "targets": 2
-                }],
-                "order": [
-                    [2, 'asc']
-                ],
-                "displayLength": 25,
-                "drawCallback": function(settings) {
-                    var api = this.api();
-                    var rows = api.rows({
-                        page: 'current'
-                    }).nodes();
-                    var last = null;
-                    api.column(2, {
-                        page: 'current'
-                    }).data().each(function(group, i) {
-                        if (last !== group) {
-                            $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
-                            last = group;
-                        }
-                    });
-                }
-            });
-            // Order by the grouping
-            $('#example tbody').on('click', 'tr.group', function() {
-                var currentOrder = table.order()[0];
-                if (currentOrder[0] === 2 && currentOrder[1] === 'asc') {
-                    table.order([2, 'desc']).draw();
-                } else {
-                    table.order([2, 'asc']).draw();
-                }
-            });
-        });
-    });
-    $('#example23').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
+        if ($.fn.DataTable && $('#myTable').length) {
+            $('#myTable').DataTable();
+        }
     });
 </script>
 @endsection

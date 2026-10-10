@@ -21,7 +21,9 @@
                   <h4 class="card-title"> Data Harga Laundry Per-Cabang
                       <a class="btn btn-primary" style="color:white">Tambah</a>
                   </h4>
-                  <div class="table-responsive m-t-0">
+
+                  {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+                  <div class="table-responsive m-t-0 d-none d-md-block">
                       <table id="myTable" class="table display table-bordered table-striped">
                           <thead>
                               <tr>
@@ -61,6 +63,29 @@
                           </tbody>
                       </table>
                   </div>
+
+                  {{-- ===== MOBILE (<768px): KARTU ===== --}}
+                  <div class="jv-cards-mobile m-t-0">
+                      @forelse ($harga as $item)
+                        <div class="jv-mcard">
+                          <div class="jv-mcard-title">
+                            <span>{{ $item->jenis }}</span>
+                            @if ($item->status == "1")<span class="label label-primary">Aktif</span>
+                            @else<span class="label label-warning">Tidak Aktif</span>@endif
+                          </div>
+                          <div class="jv-mcard-row"><span class="jv-mcard-label">Lama</span><span class="jv-mcard-value">{{ $item->hari }} Hari</span></div>
+                          <div class="jv-mcard-row"><span class="jv-mcard-label">Kg</span><span class="jv-mcard-value">{{ $item->kg }} Kg</span></div>
+                          <div class="jv-mcard-row"><span class="jv-mcard-label">Harga</span><span class="jv-mcard-value" style="font-weight:700">{{ Rupiah::getRupiah($item->harga) }}</span></div>
+                          <div class="jv-mcard-row"><span class="jv-mcard-label">Cabang</span><span class="jv-mcard-value">{{ $item->harga_user->nama_cabang }}</span></div>
+                          <div class="jv-mcard-actions">
+                            <a class="btn btn-sm btn-success" data-toggle="modal" data-id="{{$item->id}}" data-id-jenis="{{$item->jenis}}" data-id-kg="{{$item->kg}}" data-id-harga="{{$item->harga}}" data-id-hari="{{$item->hari}}" data-id-status="{{$item->status}}" id="click_harga" data-target="#edit_harga" style="color:white">Edit</a>
+                          </div>
+                        </div>
+                      @empty
+                        <div class="jv-mcard-empty">Belum ada data harga.</div>
+                      @endforelse
+                  </div>
+
                   @include('modul_admin.laundri.editharga')
               </div>
           </div>
@@ -180,8 +205,8 @@ $(".format_harga").autoNumeric('init', {
     vMin: '-999999999'
 });
 
-// Tampilkan Modal Edit Harga
-$(document).on('click','#click_harga', function(){
+// Tampilkan Modal Edit Harga (delegated -> tabel & kartu)
+$(document).on('click','[id=click_harga]', function(){
     var id = $(this).attr('data-id');
     var jenis = $(this).attr('data-id-jenis');
     var kg = $(this).attr('data-id-kg');
@@ -219,34 +244,9 @@ $(document).on('click','#simpan_harga', function(){
 
 
  $(document).ready(function() {
-    $('#myTable').DataTable();
-    $(document).ready(function() {
-        var table = $('#example').DataTable({
-            "columnDefs": [{
-                "visible": false,
-                "targets": 2
-            }],
-            "order": [
-                [2, 'asc']
-            ],
-            "displayLength": 25,
-            "drawCallback": function(settings) {
-                var api = this.api();
-                var rows = api.rows({
-                    page: 'current'
-                }).nodes();
-                var last = null;
-                api.column(2, {
-                    page: 'current'
-                }).data().each(function(group, i) {
-                    if (last !== group) {
-                        $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
-                        last = group;
-                    }
-                });
-            }
-        });
-    });
+    if ($.fn.DataTable && $('#myTable').length) {
+        $('#myTable').DataTable();
+    }
 });
 </script>
 @endsection

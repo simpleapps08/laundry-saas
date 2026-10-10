@@ -167,25 +167,48 @@ class TransaksiController extends Controller
       }
 
 
-      $return = "";
+      // Kembalikan DUA representasi dari SATU query (satu sumber kebenaran):
+      // --ROWS-- untuk tabel (desktop) dan --CARDS-- untuk kartu (mobile).
+      // Dipisah penanda agar JS bisa mengisi container yang tepat.
+      $rows = "";
+      $cards = "";
       $no=1;
       foreach($transaksi as $item) {
-        $return .="<tr>
+        $total = Rupiah::getRupiah($item->kg * $item->harga);
+
+        // Label status (samakan dengan view)
+        $stLabel = ['Done'=>'Selesai','Delivery'=>'Sudah Diambil','Process'=>'Sedang Proses'][$item->status_order] ?? $item->status_order;
+        $stClass = ['Done'=>'label-success','Delivery'=>'label-info','Process'=>'label-info'][$item->status_order] ?? 'label-default';
+        $payLabel = ['Success'=>'Sudah Dibayar','Pending'=>'Belum Dibayar'][$item->status_payment] ?? $item->status_payment;
+        $payClass = ['Success'=>'label-success','Pending'=>'label-info'][$item->status_payment] ?? 'label-default';
+        $jenis = optional($item->price)->jenis ?? '-';
+
+        $rows .="<tr>
           <td>".$no."</td>
           <td>".$item->tgl_transaksi."</td>
           <td>".$item->customer."</td>
-          <td>".$item->status_order."</td>
-          <td>".$item->status_payment."</td>
-          <td>".$item->price->jenis."</td>";
-          $return .="
-          <input type='hidden' value='".$item->kg * $item->harga."'>
-          <td>".Rupiah::getRupiah($item->kg * $item->harga)."</td>";
-          $return .="<td><a href='invoice-customer/$item->invoice' class='btn btn-sm btn-success style='color:white'>Invoice</a></td>";
-        $return .= "</td>
-        </tr>";
+          <td><span class='label ".$stClass."'>".$stLabel."</span></td>
+          <td><span class='label ".$payClass."'>".$payLabel."</span></td>
+          <td>".$jenis."</td>
+          <td>".$total."</td>";
+        $rows .="<td align='center'><a href='invoice-customer/".$item->invoice."' class='btn btn-sm btn-success' style='color:white'>Invoice</a></td>";
+        $rows .= "</tr>";
+
+        $cards .="<div class='jv-mcard'>
+          <div class='jv-mcard-title'><span>".$item->invoice."</span><span class='label ".$stClass."'>".$stLabel."</span></div>
+          <div class='jv-mcard-row'><span class='jv-mcard-label'>Tanggal</span><span class='jv-mcard-value'>".$item->tgl_transaksi."</span></div>
+          <div class='jv-mcard-row'><span class='jv-mcard-label'>Customer</span><span class='jv-mcard-value'>".$item->customer."</span></div>
+          <div class='jv-mcard-row'><span class='jv-mcard-label'>Jenis</span><span class='jv-mcard-value'>".$jenis."</span></div>
+          <div class='jv-mcard-row'><span class='jv-mcard-label'>Pembayaran</span><span class='jv-mcard-value'><span class='label ".$payClass."'>".$payLabel."</span></span></div>
+          <div class='jv-mcard-row'><span class='jv-mcard-label'>Total</span><span class='jv-mcard-value' style='font-weight:700'>".$total."</span></div>
+          <div class='jv-mcard-actions'><a href='invoice-customer/".$item->invoice."' class='btn btn-sm btn-success' style='color:white'>Invoice</a></div>
+        </div>";
         $no++;
       }
-      return $return;
+      if ($cards === '') {
+        $cards = "<div class='jv-mcard-empty'>Belum ada transaksi.</div>";
+      }
+      return $rows . "<!--CARDS-->" . $cards;
     }
 
     // Invoice

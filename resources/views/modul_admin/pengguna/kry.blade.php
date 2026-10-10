@@ -21,7 +21,8 @@
                 <a href="{{route('karyawan.create')}}" class="btn btn-primary">Tambah</a>
             </h4>
 
-            <div class="table-responsive">
+            {{-- ===== DESKTOP (>=768px): TABEL ===== --}}
+            <div class="table-responsive d-none d-md-block">
                 <table class="table zero-configuration">
                     <thead>
                         <tr>
@@ -65,6 +66,32 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- ===== MOBILE (<768px): KARTU ===== --}}
+            <div class="jv-cards-mobile">
+              @forelse ($kry as $item)
+                <div class="jv-mcard">
+                  <div class="jv-mcard-title">
+                    <span>{{ $item->name }}</span>
+                    @if ($item->status == 'Active')<span class="label label-success">Aktif</span>
+                    @else<span class="label label-danger">Tidak Aktif</span>@endif
+                  </div>
+                  <div class="jv-mcard-row"><span class="jv-mcard-label">Email</span><span class="jv-mcard-value">{{ $item->email }}</span></div>
+                  <div class="jv-mcard-row"><span class="jv-mcard-label">Nama Cabang</span><span class="jv-mcard-value">{{ $item->nama_cabang ?: '-' }}</span></div>
+                  <div class="jv-mcard-row"><span class="jv-mcard-label">Alamat Cabang</span><span class="jv-mcard-value">{{ $item->alamat_cabang ?: '-' }}</span></div>
+                  <div class="jv-mcard-row"><span class="jv-mcard-label">No Telp</span><span class="jv-mcard-value">{{ $item->no_telp ?: '-' }}</span></div>
+                  <div class="jv-mcard-actions">
+                    <form action="{{ route('karyawan.destroy',$item->id) }}" method="POST" style="display:contents">
+                      @csrf
+                      @method('DELETE')
+                      <a class="btn btn-sm btn-{{$item->status == 'Active' ? 'primary' : 'danger'}}" data-id-update="{{$item->id}}" id="updateStatus">{{$item->status == 'Active' ? 'Non-Aktifkan' : 'Aktifkan'}}</a>
+                    </form>
+                  </div>
+                </div>
+              @empty
+                <div class="jv-mcard-empty">Belum ada karyawan.</div>
+              @endforelse
+            </div>
         </div>
     </div>
   </div>
@@ -72,14 +99,12 @@
 @endsection
 @section('scripts')
 <script type="text/javascript">
-  // Update Status Karyawan
-  $(document).on('click', '#updateStatus', function () {
+  // Update Status Karyawan (delegated -> berlaku di tabel & kartu)
+  $(document).on('click', '[id=updateStatus]', function () {
     var id = $(this).attr('data-id-update');
     $.get('update-satatus-karyawan', {'_token' : $('meta[name=csrf-token]').attr('content'),id:id}, function(_resp){
       location.reload()
     });
   });
-
 </script>
-
 @endsection
