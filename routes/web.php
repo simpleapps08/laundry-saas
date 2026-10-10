@@ -179,3 +179,39 @@ Route::middleware('auth')->group(function () {
     Route::put('me/{id}','Customer\ProfileController@updateProfile');
   });
 });
+
+// ════════════════════════════════════════════════════════════════════
+// Q3=C: ORDER ONLINE PER MERCHANT / PER CABANG — WAJIB PALING AKHIR
+// ════════════════════════════════════════════════════════════════════
+// /{slug}/pesan               -> merchant tertentu (cabang terbatas)
+// /{slug}/{kodeCabang}/pesan  -> cabang spesifik (QR outlet)
+// /{slug}                     -> profil/brand merchant
+//
+// 🔴 JEBAKAN: Laravel mencocokkan route BERDASARKAN URUTAN REGISTRASI.
+// Route wildcard /{slug} HARUS didaftarkan SETELAH semua route statis
+// (customer, finance, dokumentasi, admin, dst) — kalau tidak, /{slug}
+// menang duluan dan route seperti /customer jadi 404. Jangan pindahkan
+// blok ini ke atas. Constraint slug ketat tetap dipasang sebagai
+// lapisan kedua.
+Route::middleware('throttle:20,60')->group(function () {
+    $slug = '[a-z0-9\-]+';
+    $kodeCabang = '[A-Za-z0-9\-]+';
+
+    Route::get('{slug}/pesan', [\App\Http\Controllers\OrderOnlineController::class, 'formMerchant'])
+        ->where('slug', $slug)
+        ->name('order-online.merchant.form');
+    Route::post('{slug}/pesan', [\App\Http\Controllers\OrderOnlineController::class, 'kirimMerchant'])
+        ->where('slug', $slug)
+        ->name('order-online.merchant.kirim');
+
+    Route::get('{slug}/{kodeCabang}/pesan', [\App\Http\Controllers\OrderOnlineController::class, 'formCabang'])
+        ->where(['slug' => $slug, 'kodeCabang' => $kodeCabang])
+        ->name('order-online.cabang.form');
+    Route::post('{slug}/{kodeCabang}/pesan', [\App\Http\Controllers\OrderOnlineController::class, 'kirimCabang'])
+        ->where(['slug' => $slug, 'kodeCabang' => $kodeCabang])
+        ->name('order-online.cabang.kirim');
+
+    Route::get('{slug}', [\App\Http\Controllers\OrderOnlineController::class, 'merchantProfile'])
+        ->where('slug', $slug)
+        ->name('order-online.merchant.profile');
+});

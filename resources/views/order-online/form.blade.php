@@ -1,13 +1,23 @@
 @extends('layouts.order-online')
 
-@section('title', 'Pesan Laundry Online — Javacom Laundry')
-@section('header', 'Pesan Laundry')
+@section('title')
+  {{ $merchant ? 'Pesan Laundry — '.$merchant->nama : 'Pesan Laundry Online — Javacom Laundry' }}
+@endsection
+@section('header', $merchant ? $merchant->nama : 'Pesan Laundry')
 
 @section('content')
 <div class="oo-wrap">
   <div class="oo-card">
     <div class="oo-head">
-      <h1 class="oo-title">Pesan Laundry Online</h1>
+      @if ($merchant)
+        <p class="oo-merchant-tag">Pesan ke</p>
+        <h1 class="oo-title">{{ $merchant->nama }}</h1>
+        @if (!empty($merchant->alamat))
+          <p class="oo-sub">{{ $merchant->alamat }}</p>
+        @endif
+      @else
+        <h1 class="oo-title">Pesan Laundry Online</h1>
+      @endif
       <p class="oo-sub">Isi form ini, kami jemput cucian Anda. Tanpa perlu bikin akun.</p>
     </div>
 
@@ -22,7 +32,7 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('order-online.kirim') }}" class="oo-form">
+    <form method="POST" action="{{ $aksiKirim }}" class="oo-form">
       @csrf
 
       <div class="oo-field">
@@ -36,17 +46,29 @@
         <small class="oo-hint">Kami kirim notifikasi status cucian ke nomor ini.</small>
       </div>
 
-      <div class="oo-field">
-        <label>Cabang Laundry <span class="oo-req">*</span></label>
-        <select name="cabang_id" required>
-          <option value="">-- Pilih cabang --</option>
-          @foreach ($cabangs as $c)
-            <option value="{{ $c->id }}" {{ (old('cabang_id', $cabangId) == $c->id) ? 'selected' : '' }}>
-              {{ $c->nama }}@if($c->alamat) — {{ $c->alamat }}@endif
-            </option>
-          @endforeach
-        </select>
-      </div>
+      @if ($cabangFixed)
+        {{-- Cabang sudah ditentukan lewat URL (QR outlet) -> tampilkan info, bukan dropdown --}}
+        <div class="oo-field">
+          <label>Cabang Laundry</label>
+          <div class="oo-cabang-fixed">
+            <b>{{ $cabangFixed->nama }}</b>
+            @if ($cabangFixed->alamat)<small>{{ $cabangFixed->alamat }}</small>@endif
+          </div>
+          <input type="hidden" name="cabang_id" value="{{ $cabangFixed->id }}">
+        </div>
+      @else
+        <div class="oo-field">
+          <label>Cabang Laundry <span class="oo-req">*</span></label>
+          <select name="cabang_id" required>
+            <option value="">-- Pilih cabang --</option>
+            @foreach ($cabangs as $c)
+              <option value="{{ $c->id }}" {{ (old('cabang_id', $cabangId) == $c->id) ? 'selected' : '' }}>
+                {{ $c->nama }}@if($c->alamat) — {{ $c->alamat }}@endif
+              </option>
+            @endforeach
+          </select>
+        </div>
+      @endif
 
       <div class="oo-field">
         <label>Alamat Lengkap <span class="oo-req">*</span></label>

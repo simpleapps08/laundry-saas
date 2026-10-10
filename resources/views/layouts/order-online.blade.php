@@ -64,7 +64,44 @@
         .oo-steps li:last-child:after{display:none}
         .oo-steps li b{color:var(--ink)}
         .oo-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--tosca-light);color:#134e4a}
-    </style>
+    
+/* ── Q3=C: routing per-merchant/cabang (10-Okt-2026) ────────────────── */
+.oo-merchant-tag{
+  margin:0 0 2px;font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--tosca-dark);
+}
+.oo-cabang-fixed{
+  background:#f0fdfa;border:1px solid var(--tosca-light);border-radius:10px;
+  padding:12px 14px;
+}
+.oo-cabang-fixed b{display:block;font-size:15px;color:var(--ink)}
+.oo-cabang-fixed small{display:block;margin-top:2px;color:var(--grey);font-size:13px}
+
+.oo-profile{text-align:center}
+.oo-btn-inline{
+  display:inline-block;margin-top:14px;background:var(--tosca-dark);color:#fff;
+  padding:12px 26px;border-radius:10px;font-weight:700;text-decoration:none;
+}
+.oo-btn-inline:hover{background:#0b6b60}
+
+.oo-cabang-list{list-style:none;padding:0;margin:14px 0 0}
+.oo-cabang-list li{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 0;border-top:1px solid var(--line);
+}
+.oo-cabang-info b{display:block;font-size:15px}
+.oo-cabang-info small{display:block;margin-top:2px;color:var(--grey);font-size:13px}
+.oo-cabang-btn{
+  flex:0 0 auto;background:var(--tosca);color:#fff;padding:9px 18px;
+  border-radius:9px;font-weight:600;font-size:14px;text-decoration:none;
+}
+.oo-cabang-btn:hover{background:var(--tosca-dark)}
+@media(max-width:560px){
+  .oo-cabang-list li{flex-direction:column;align-items:flex-start}
+  .oo-cabang-btn{width:100%;text-align:center}
+}
+
+</style>
 </head>
 <body>
     <header class="oo-top">
