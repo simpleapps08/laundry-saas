@@ -28,4 +28,25 @@ class harga extends Model
     {
       return $this->belongsTo(User::class,'user_id','id');
     }
+
+    /**
+     * Cabang pemilik harga ini (sumber kebenaran nama cabang).
+     * Kolom cabang_id sudah terisi untuk semua data; relasi ke User di atas
+     * hanya cadangan untuk data lama yang belum punya cabang_id.
+     */
+    public function cabang()
+    {
+      return $this->belongsTo(\App\Models\Cabang::class, 'cabang_id', 'id');
+    }
+
+    /**
+     * Nama cabang untuk ditampilkan.
+     * Prioritas: tabel cabang (cabang_id) -> fallback kolom users.nama_cabang (data lama).
+     */
+    public function getNamaCabangTampilAttribute(): string
+    {
+      return $this->cabang->nama
+          ?? $this->harga_user->nama_cabang
+          ?? '—';
+    }
 }

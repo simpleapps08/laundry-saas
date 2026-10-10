@@ -53,7 +53,7 @@
                                       <span class="label label-warning">Tidak Aktif</span>
                                       @endif
                                   </td>
-                                  <td>{{$item->harga_user->nama_cabang}}</td>
+                                  <td>{{ $item->nama_cabang_tampil }}</td>
                                   <td>
                                       <a class="btn btn-sm btn-success" data-toggle="modal" data-id="{{$item->id}}" data-id-jenis="{{$item->jenis}}" data-id-kg="{{$item->kg}}" data-id-harga="{{$item->harga}}" data-id-hari="{{$item->hari}}" data-id-status="{{$item->status}}" id="click_harga" data-target="#edit_harga" style="color:white">Edit</a>
                                   </td>
@@ -76,7 +76,7 @@
                           <div class="jv-mcard-row"><span class="jv-mcard-label">Lama</span><span class="jv-mcard-value">{{ $item->hari }} Hari</span></div>
                           <div class="jv-mcard-row"><span class="jv-mcard-label">Kg</span><span class="jv-mcard-value">{{ $item->kg }} Kg</span></div>
                           <div class="jv-mcard-row"><span class="jv-mcard-label">Harga</span><span class="jv-mcard-value" style="font-weight:700">{{ Rupiah::getRupiah($item->harga) }}</span></div>
-                          <div class="jv-mcard-row"><span class="jv-mcard-label">Cabang</span><span class="jv-mcard-value">{{ $item->harga_user->nama_cabang }}</span></div>
+                          <div class="jv-mcard-row"><span class="jv-mcard-label">Cabang</span><span class="jv-mcard-value">{{ $item->nama_cabang_tampil }}</span></div>
                           <div class="jv-mcard-actions">
                             <a class="btn btn-sm btn-success" data-toggle="modal" data-id="{{$item->id}}" data-id-jenis="{{$item->jenis}}" data-id-kg="{{$item->kg}}" data-id-harga="{{$item->harga}}" data-id-hari="{{$item->hari}}" data-id-status="{{$item->status}}" id="click_harga" data-target="#edit_harga" style="color:white">Edit</a>
                           </div>

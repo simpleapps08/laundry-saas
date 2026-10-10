@@ -81,7 +81,7 @@ class FinanceController extends Controller
     public function dataharga()
     {
       // Ambil data harga
-      $harga = harga::with('harga_user')->orderBy('id','DESC')->get();
+      $harga = harga::with(['harga_user', 'cabang'])->orderBy('id','DESC')->get();
       // Cek Apakah sudah ada karyawan atau belum
       $karyawan = User::where('auth','Karyawan')->first();
       // Ambil list cabang
