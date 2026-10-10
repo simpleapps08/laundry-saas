@@ -11,6 +11,8 @@ class notifications_setting extends Model
     use HasFactory, MilikCabang;
 
     protected $fillable = [
-      'cabang_id','telegram_order_masuk','telegram_order_selesai','email','wa_order_selesai','wa_token'
+      'cabang_id','user_id','telegram_order_masuk','telegram_order_selesai','email',
+      'telegram_channel_masuk','telegram_channel_selesai',
+      'wa_order_selesai','wa_token'
     ];
 }

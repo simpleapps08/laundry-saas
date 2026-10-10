@@ -74,8 +74,8 @@ if (! function_exists('telegram_channel_masuk'))
 {
     function telegram_channel_masuk()
     {
-        $model = new notifications_setting;
-        $data  = $model::first();
+        // FIX: dulu first() global -> ambil setelan cabang lain. Sekarang per-cabang aktif.
+        $data  = notifications_setting::first();
         $channel_masuk = $data ? $data->telegram_channel_masuk : NULL;
         return $channel_masuk;
     }
@@ -86,8 +86,8 @@ if (! function_exists('telegram_channel_selesai'))
 {
     function telegram_channel_selesai()
     {
-        $model = new notifications_setting;
-        $data  = $model::first();
+        // FIX: dulu first() global. Sekarang ikut scope cabang (model MilikCabang).
+        $data  = notifications_setting::first();
         $channel_selesai = $data ? $data->telegram_channel_selesai : NULL;
         return $channel_selesai;
     }
@@ -110,8 +110,8 @@ if (! function_exists('wa_order_selesai'))
 {
     function wa_order_selesai()
     {
-        $model = new notifications_setting;
-        $data  = $model::first();
+        // FIX: first() global -> sekarang ikut scope cabang.
+        $data  = notifications_setting::first();
         $channel_selesai = $data ? $data->wa_order_selesai : NULL;
         return $channel_selesai;
     }
@@ -122,8 +122,8 @@ if (! function_exists('getTokenWhatsapp'))
 {
     function getTokenWhatsapp()
     {
-        $model = new notifications_setting;
-        $data  = $model::first();
+        // FIX: first() global -> sekarang ikut scope cabang.
+        $data  = notifications_setting::first();
         $channel_selesai = $data ? $data->wa_token : NULL;
         return $channel_selesai;
     }

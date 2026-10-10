@@ -78,16 +78,50 @@ class SettingsController extends Controller
   }
 
   // Setting Laundry Target
-  public function set_target_laundry(Request $request, $id)
+  // FIX: dulu findOrFail($id) dengan $id = ID USER -> tabel laundry_settings kosong
+  //      -> 404 (target tidak pernah bisa disimpan). Sekarang firstOrCreate PER-CABANG.
+  public function set_target_laundry(Request $request, $id = null)
   {
-    $set_target = LaundrySetting::findOrFail($id);
-    $set_target->target_day = $request->target_day;
+    $request->validate([
+      'target_day'   => 'required|numeric|min:0',
+      'target_month' => 'required|numeric|min:0',
+      'target_year'  => 'required|numeric|min:0',
+    ]);
+
+    // Cabang tujuan = cabang aktif (session) / cabang user / cabang pertama merchant.
+    $cabangId = $this->_cabangAktif();
+
+    $set_target = LaundrySetting::firstOrCreate(
+      ['cabang_id' => $cabangId],
+      ['user_id'   => Auth::id(), 'target_day' => 0, 'target_month' => 0, 'target_year' => 0]
+    );
+    $set_target->target_day   = $request->target_day;
     $set_target->target_month = $request->target_month;
-    $set_target->target_year = $request->target_year;
+    $set_target->target_year  = $request->target_year;
     $set_target->save();
 
     Session::flash('success','Target Berhasil Diupdate !');
     return back();
+  }
+
+  /**
+   * Tentukan cabang aktif untuk operasi tulis setelan.
+   * Prioritas: cabang aktif di session -> cabang_id user -> cabang pertama merchant.
+   */
+  private function _cabangAktif(): ?int
+  {
+    $user = Auth::user();
+    if ($user === null) return null;
+
+    $cabangAktif = session('cabang_aktif_id');
+    if ($cabangAktif !== null && $user->bolehAksesCabang($cabangAktif)) {
+      return (int) $cabangAktif;
+    }
+    if ($user->cabang_id !== null) {
+      return (int) $user->cabang_id;
+    }
+    $ids = $user->cabangIds();
+    return $ids[0] ?? null;
   }
 
   // Simpan Bank
@@ -153,15 +187,22 @@ class SettingsController extends Controller
   }
 
   // Notification
-  public function notif(Request $request,$id)
+  // FIX: dulu findOrFail($id) dengan $id = ID USER -> tabel notifications_settings kosong
+  //      -> 404 (notifikasi tidak pernah bisa disimpan). Sekarang firstOrCreate PER-CABANG.
+  // FIX: dulu `telegram_channel_selesai` diisi dari `$request->telegram_channel_masuk`
+  //      (bug copy-paste) -> notif order selesai salah channel. Sekarang field terpisah.
+  public function notif(Request $request, $id = null)
   {
-    $notif = notifications_setting::findorFail($id);
-    $notif->telegram_order_masuk      = $request->telegram_order_masuk;
-    $notif->telegram_order_selesai    = $request->telegram_order_selesai;
-    $notif->email                     = $request->email;
+    $notif = notifications_setting::firstOrCreate(
+      ['cabang_id' => $this->_cabangAktif()],
+      ['user_id'   => Auth::id()]
+    );
+    $notif->telegram_order_masuk      = $request->has('telegram_order_masuk') ? 1 : 0;
+    $notif->telegram_order_selesai    = $request->has('telegram_order_selesai') ? 1 : 0;
+    $notif->email                     = $request->has('email') ? 1 : 0;
     $notif->telegram_channel_masuk    = $request->telegram_channel_masuk;
-    $notif->telegram_channel_selesai  = $request->telegram_channel_masuk;
-    $notif->wa_order_selesai          = $request->wa_order_selesai;
+    $notif->telegram_channel_selesai  = $request->telegram_channel_selesai ?: $request->telegram_channel_masuk;
+    $notif->wa_order_selesai          = $request->has('wa_order_selesai') ? 1 : 0;
     $notif->wa_token                  = $request->wa_token;
     $notif->save();
 

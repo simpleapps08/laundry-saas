@@ -170,7 +170,7 @@
 
                 {{-- Panel Target --}}
                 <div class="tab-pane fade" id="vertical-target" role="tabpanel" aria-labelledby="pill-target" aria-expanded="false">
-                  <form action="{{route('set-target.update', Auth::user()->id)}}" method="post">
+                  <form action="{{route('set-target.update', 0)}}" method="post">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -298,7 +298,7 @@
                 {{-- Panel Notifications --}}
                 <div class="tab-pane fade" id="vertical-notif" role="tabpanel" aria-labelledby="pill-notif" aria-expanded="false">
                   <div class="alert alert-danger">Baca Dokumentasi untuk mempermudah integrasi dan penggunaan Notifikasi pada halaman <b>Dokumentasi.</b></div>
-                  <form action="{{route('set-notif.update', Auth::id())}}" method="post">
+                  <form action="{{route('set-notif.update', 0)}}" method="post">
                     @csrf
                     @method('PUT')
                       <div class="row">
@@ -330,12 +330,25 @@
                           </div>
                         </div>
 
-                        <h5 class="m-1">Channel Telegram</h5>
+                        <h5 class="m-1">Channel Telegram Order Masuk</h5>
                         <div class="col-md-12 mb-1">
                            <div class="form-group">
-                              <input type="text" name="telegram_channel_masuk" class="form-control" placeholder="Masukan Nama Channel Telegram" value=" {{$setnotif->telegram_channel_masuk}} ">
-                              @if ($setnotif->telegram_order_selesai == 1 || $setnotif->telegram_order_masuk == 1)
+                              <input type="text" name="telegram_channel_masuk" class="form-control" placeholder="cth: @laundry_order_masuk" value="{{$setnotif->telegram_channel_masuk}}">
+                              @if ($setnotif->telegram_order_masuk == 1)
                                 @if ($setnotif->telegram_channel_masuk == '')
+                                  <small class="text-danger">Channel telegram wajib diisi.</small>
+                                @endif
+                               @endif
+                          </div>
+                        </div>
+
+                        <h5 class="m-1">Channel Telegram Order Selesai</h5>
+                        <div class="col-md-12 mb-1">
+                           <div class="form-group">
+                              <input type="text" name="telegram_channel_selesai" class="form-control" placeholder="cth: @laundry_order_selesai (kosongkan = sama dengan channel masuk)" value="{{$setnotif->telegram_channel_selesai}}">
+                              <small class="text-muted">Dikosongkan = otomatis sama dengan channel order masuk.</small>
+                              @if ($setnotif->telegram_order_selesai == 1)
+                                @if ($setnotif->telegram_channel_selesai == '' && $setnotif->telegram_channel_masuk == '')
                                   <small class="text-danger">Channel telegram wajib diisi.</small>
                                 @endif
                                @endif
