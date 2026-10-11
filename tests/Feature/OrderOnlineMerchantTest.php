@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Cabang;
 use App\Models\Merchant;
 use App\Models\PesananOnline;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -19,8 +19,9 @@ use Tests\TestCase;
  */
 class OrderOnlineMerchantTest extends TestCase
 {
-    use DatabaseTransactions;   // BUKAN RefreshDatabase: tabel role/permission
-                                // di-seed sekali & dipakai test lain -> jangan dikosongkan.
+    // DB test = SQLite :memory: (phpunit.xml) -> terisolasi total dari MySQL dev.
+    // RefreshDatabase migrasi ulang tiap test; RoleSeeder dijalankan TestCase::setUp.
+    use RefreshDatabase;
 
     private function buatMerchant(string $nama, string $slug, array $cabang = []): Merchant
     {

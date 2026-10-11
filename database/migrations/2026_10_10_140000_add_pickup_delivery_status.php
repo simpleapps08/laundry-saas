@@ -16,6 +16,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // GUARD: MODIFY COLUMN ... ENUM hanya sintaks MySQL/MariaDB.
+        // Di SQLite (DB test) kolom enum = varchar, tidak perlu diubah.
+        if (! in_array(DB::getDriverName(), ['mysql', 'mariadb'])) {
+            return;
+        }
         DB::statement("ALTER TABLE transaksis MODIFY COLUMN status_order
             ENUM('Dijemput','Process','Done','Diantar','Delivery','Batal')
             NOT NULL DEFAULT 'Process'");
@@ -25,6 +30,9 @@ return new class extends Migration
     {
         // Kembalikan baris yang memakai status baru ke nilai lama yang setara,
         // supaya penyempitan enum tidak ditolak MySQL.
+        if (! in_array(DB::getDriverName(), ['mysql', 'mariadb'])) {
+            return;
+        }
         DB::table('transaksis')->where('status_order', 'Dijemput')->update(['status_order' => 'Process']);
         DB::table('transaksis')->where('status_order', 'Diantar')->update(['status_order' => 'Delivery']);
 

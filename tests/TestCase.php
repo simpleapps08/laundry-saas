@@ -22,6 +22,19 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Reset rate limiter antar-test. Tanpa ini, semua request test
+        // (1 proses PHP) terakumulasi dalam satu hitungan throttle:20,60
+        // -> test ke-21+ kena HTTP 429 (bukan kegagalan logika test).
+        // Di produksi limiter per-IP per-menit; di test kita mulai dari nol.
+        try {
+            $cache = $this->app['cache']->store();
+            if (method_exists($cache, 'flush')) {
+                $cache->flush();
+            }
+        } catch (\Throwable $e) {
+            // abaikan bila cache tidak tersedia
+        }
+
         try {
             Artisan::call('db:seed', [
                 '--class' => 'Database\\Seeders\\RoleSeeder',

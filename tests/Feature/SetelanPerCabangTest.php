@@ -7,7 +7,7 @@ use App\Models\LaundrySetting;
 use App\Models\Merchant;
 use App\Models\User;
 use App\Models\notifications_setting;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -21,7 +21,7 @@ use Tests\TestCase;
  */
 class SetelanPerCabangTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;  // SQLite :memory: (phpunit.xml) -> migrasi tiap test, terisolasi dari MySQL dev
 
     private function buatMerchantDuaCabang(): array
     {
@@ -30,7 +30,7 @@ class SetelanPerCabangTest extends TestCase
             'kode' => 'MS-'.$suffix,
             'nama' => 'Merchant Setelan',
             'slug' => 'merchant-setelan-'.$suffix,
-            'status' => 'Aktif',
+            'status' => 'aktif',
         ]);
 
         $cabangA = Cabang::create(['merchant_id' => $merchant->id, 'kode' => 'SA-'.$suffix, 'nama' => 'Setelan A']);
@@ -38,7 +38,7 @@ class SetelanPerCabangTest extends TestCase
 
         $owner = User::create([
             'name' => 'Owner Setelan', 'email' => 'owner.set.'.uniqid().'@t.local',
-            'password' => bcrypt('123456'), 'status' => 'Aktif', 'auth' => 'Admin',
+            'password' => bcrypt('123456'), 'status' => 'Active', 'auth' => 'Admin',
             'merchant_id' => $merchant->id, 'cabang_id' => null,
         ]);
         $owner->assignRole('Admin');

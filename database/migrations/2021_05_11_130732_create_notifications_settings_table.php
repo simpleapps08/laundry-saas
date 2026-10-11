@@ -16,9 +16,9 @@ class CreateNotificationsSettingsTable extends Migration
         Schema::create('notifications_settings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->boolean('telegram_order_masuk');
-            $table->boolean('telegram_order_selesai');
-            $table->boolean('email');
+            $table->boolean('telegram_order_masuk')->default(0);
+            $table->boolean('telegram_order_selesai')->default(0);
+            $table->boolean('email')->default(0);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });

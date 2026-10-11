@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Cabang;
 use App\Models\Merchant;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -16,7 +16,7 @@ use Tests\TestCase;
  */
 class IsolasiCabangTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;  // SQLite :memory: (phpunit.xml) -> migrasi tiap test, terisolasi dari MySQL dev
 
     private function buatMerchantDuaCabang(): array
     {
@@ -25,7 +25,7 @@ class IsolasiCabangTest extends TestCase
             'kode' => 'MU-'.$suffix,
             'nama' => 'Merchant Uji Isolasi',
             'slug' => 'merchant-uji-'.$suffix,
-            'status' => 'Aktif',
+            'status' => 'aktif',
         ]);
 
         $cabangA = Cabang::create([
@@ -41,21 +41,21 @@ class IsolasiCabangTest extends TestCase
 
         $owner = User::create([
             'name' => 'Owner Uji', 'email' => 'owner.uji.'.uniqid().'@t.local',
-            'password' => bcrypt('123456'), 'status' => 'Aktif', 'auth' => 'Karyawan',
+            'password' => bcrypt('123456'), 'status' => 'Active', 'auth' => 'Karyawan',
             'merchant_id' => $merchant->id, 'cabang_id' => null,
         ]);
         $owner->assignRole('Admin');
 
         $kasirA = User::create([
             'name' => 'Kasir A', 'email' => 'kasir.a.'.uniqid().'@t.local',
-            'password' => bcrypt('123456'), 'status' => 'Aktif', 'auth' => 'Karyawan',
+            'password' => bcrypt('123456'), 'status' => 'Active', 'auth' => 'Karyawan',
             'merchant_id' => $merchant->id, 'cabang_id' => $cabangA->id,
         ]);
         $kasirA->assignRole('Karyawan');
 
         $kasirB = User::create([
             'name' => 'Kasir B', 'email' => 'kasir.b.'.uniqid().'@t.local',
-            'password' => bcrypt('123456'), 'status' => 'Aktif', 'auth' => 'Karyawan',
+            'password' => bcrypt('123456'), 'status' => 'Active', 'auth' => 'Karyawan',
             'merchant_id' => $merchant->id, 'cabang_id' => $cabangB->id,
         ]);
         $kasirB->assignRole('Karyawan');
@@ -90,14 +90,32 @@ class IsolasiCabangTest extends TestCase
     {
         [, $cabangA, $cabangB, , $kasirA] = $this->buatMerchantDuaCabang();
 
-        $tA = \App\Models\transaksi::create([
+        // Kolom wajib transaksis (skema lama NOT NULL tanpa default) diisi
+        // lengkap -> valid baik di MySQL maupun SQLite (DB test).
+        $wajib = fn (array $extra) => array_merge([
+            'customer_id'    => '1',
+            'user_id'        => (string) $kasirA->id,
+            'tgl_transaksi'  => now()->toDateString(),
+            'customer'       => 'Pelanggan Uji',
+            'email_customer' => 'uji@t.local',
+            'status_order'   => 'Process',
+            'status_payment' => 'Pending',
+            'jenis_pembayaran' => 'Tunai',
+            'harga_id'       => 1,
+            'kg'             => '2',
+            'hari'           => '2',
+            'harga'          => '7000',
+            'tgl'            => now()->toDateString(),
+            'bulan'          => now()->format('m'),
+            'tahun'          => now()->format('Y'),
+        ], $extra);
+
+        $tA = \App\Models\transaksi::create($wajib([
             'invoice' => 'UJI-A-'.uniqid(), 'cabang_id' => $cabangA->id,
-            'user_id' => $kasirA->id, 'status' => 'Process',
-        ]);
-        $tB = \App\Models\transaksi::create([
+        ]));
+        $tB = \App\Models\transaksi::create($wajib([
             'invoice' => 'UJI-B-'.uniqid(), 'cabang_id' => $cabangB->id,
-            'status' => 'Process',
-        ]);
+        ]));
 
         $this->actingAs($kasirA);
         $terlihat = \App\Models\transaksi::pluck('id')->map('intval')->all();

@@ -14,7 +14,7 @@ class AddFieldTokenWaToNotificationsSettingsTable extends Migration
     public function up()
     {
         Schema::table('notifications_settings', function (Blueprint $table) {
-          $table->boolean('wa_order_selesai')->after('telegram_channel_selesai');
+          $table->boolean('wa_order_selesai')->default(0)->after('telegram_channel_selesai');
           $table->string('wa_token')->after('wa_order_selesai')->nullable();
         });
     }

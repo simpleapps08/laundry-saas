@@ -68,7 +68,11 @@ return new class extends Migration
 
         // ── 3. BACKFILL data lama (kalau ada) ───────────────────────────
         // Pakai raw SQL agar aman terhadap format string campuran.
-        if (Schema::hasTable('transaksis')) {
+        // GUARD: REGEXP & '+ 0' adalah sintaks MySQL. SQLite (DB test) tidak
+        // punya REGEXP -> dilewati. Backfill hanya relevan untuk data lama di
+        // MySQL produksi/dev, bukan di DB test yang selalu kosong.
+        $driver = Schema::getConnection()->getDriverName();
+        if (Schema::hasTable('transaksis') && in_array($driver, ['mysql', 'mariadb'])) {
             \DB::statement("
                 UPDATE transaksis SET
                     kg_numeric = NULLIF(REPLACE(REPLACE(kg, ',', '.'), ' ', ''), '') + 0,
